@@ -872,6 +872,9 @@ function exportPDF(){
 }
 
 // ══ 설정 ══
+// 단가 임시 저장용
+let pendingPrices = {};
+
 function renderSettings(){
   document.getElementById('worker-list').innerHTML=state.workers.length===0
     ?'<div style="font-size:13px;color:#ccc;padding:8px 0;">등록된 작업자가 없습니다</div>'
@@ -879,29 +882,75 @@ function renderSettings(){
         <div style="display:flex;align-items:center;gap:10px;"><div class="avatar">${w.slice(0,2)}</div><span style="font-size:15px;font-weight:600;">${w}</span></div>
         <button onclick="removeWorker(${i})" style="background:none;border:none;font-size:22px;color:#ddd;cursor:pointer;">🗑</button>
       </div>`).join('');
-  document.getElementById('price-list').innerHTML=state.sizes.map((sz,i)=>{
-    const c=szColor(i);
-    return `<div class="price-row">
+
+  // pendingPrices 초기화 (현재 저장된 단가로)
+  pendingPrices = {};
+  state.sizes.forEach(sz => { pendingPrices[sz.id] = sz.price; });
+
+  document.getElementById('price-list').innerHTML = state.sizes.map((sz,i) => {
+    const c = szColor(i);
+    return `<div class="price-row" id="prow-${sz.id}">
       <span class="badge" style="background:${c.bg};color:${c.color};font-size:13px;padding:6px 13px;">${sz.name}</span>
       <div style="display:flex;align-items:center;gap:6px;">
-        <input type="number" style="width:120px;text-align:right;padding:9px 11px;border:1.5px solid #e5e5e5;border-radius:10px;font-size:14px;background:#fafafa;font-weight:600;" value="${sz.price}" onchange="updatePrice('${sz.id}',this.value)" inputmode="numeric">
+        <input type="number" id="pinput-${sz.id}"
+          style="width:120px;text-align:right;padding:9px 11px;border:1.5px solid #e5e5e5;border-radius:10px;font-size:14px;background:#fafafa;font-weight:600;"
+          value="${sz.price}" inputmode="numeric"
+          oninput="onPriceInput('${sz.id}',this.value)">
         <span style="font-size:13px;color:#aaa;">원/개</span>
       </div>
     </div>`;
-  }).join('');
+  }).join('') + `
+  <div id="price-save-bar" style="display:none;margin-top:14px;padding-top:14px;border-top:1.5px solid #f0f0f0;">
+    <div style="font-size:12px;color:#854F0B;background:#FAEEDA;border-radius:8px;padding:8px 12px;margin-bottom:10px;">
+      ⚠️ 변경된 단가가 있습니다. 저장하면 모든 작업 내역의 금액이 새 단가로 적용됩니다.
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-o btn-sm" style="flex:1;" onclick="cancelPriceEdit()">취소</button>
+      <button class="btn btn-p btn-sm" style="flex:2;background:#185FA5;" onclick="savePrices()">✅ 저장 · 금액 적용</button>
+    </div>
+  </div>`;
 }
-function addWorker(){
-  const n=document.getElementById('new-worker').value.trim();
-  if(!n)return;
-  if(state.workers.includes(n)){alert('이미 등록된 작업자입니다.');return;}
-  state.workers.push(n);save();document.getElementById('new-worker').value='';renderSettings();
+
+function onPriceInput(id, val){
+  pendingPrices[id] = parseInt(val) || 0;
+  // 하나라도 기존 단가와 다르면 저장 바 표시
+  const changed = state.sizes.some(sz => pendingPrices[sz.id] !== sz.price);
+  document.getElementById('price-save-bar').style.display = changed ? 'block' : 'none';
 }
-function removeWorker(i){
-  if(!confirm(`"${state.workers[i]}"을(를) 삭제하시겠습니까?`))return;
-  state.workers.splice(i,1);save();renderSettings();
+
+function cancelPriceEdit(){
+  // 원래 단가로 복원
+  state.sizes.forEach(sz => {
+    const inp = document.getElementById('pinput-'+sz.id);
+    if(inp) inp.value = sz.price;
+    pendingPrices[sz.id] = sz.price;
+  });
+  document.getElementById('price-save-bar').style.display = 'none';
 }
-function updatePrice(id,v){
-  const sz=state.sizes.find(s=>s.id===id);if(sz){sz.price=parseInt(v)||0;save();}
+
+function savePrices(){
+  const changes = state.sizes.filter(sz => pendingPrices[sz.id] !== sz.price);
+  if(!changes.length) return;
+
+  const changeDesc = changes.map(sz =>
+    `• ${sz.name}: ${sz.price.toLocaleString()}원 → ${pendingPrices[sz.id].toLocaleString()}원`
+  ).join('\n');
+
+  if(!confirm(`아래 단가를 변경하고\n모든 금액 계산에 적용할까요?\n\n${changeDesc}`)) return;
+
+  // 단가 저장
+  state.sizes.forEach(sz => { sz.price = pendingPrices[sz.id]; });
+  save();
+
+  document.getElementById('price-save-bar').style.display = 'none';
+
+  // 변경 내용 요약 표시
+  const totalAmt = state.logs.reduce((s,l) => s + logTotal(l), 0);
+  alert(`✅ 단가가 저장되었습니다.\n\n${changeDesc}\n\n전체 작업 내역 총액: ${totalAmt.toLocaleString()}원`);
+
+  renderSettings();
+  // 다른 화면도 갱신
+  renderHome();
 }
 function clearData(){
   if(!confirm('모든 데이터를 초기화하시겠습니까?\n이 작업은 되돌릴 수 없습니다.'))return;
