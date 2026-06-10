@@ -190,8 +190,27 @@ select:focus,input:focus{border-color:#185FA5;background:#fff;}
   <div class="pbtn-bar">
     <button class="pbtn active" onclick="filterPay('month',this)">이번 달</button>
     <button class="pbtn" onclick="filterPay('all',this)">전체</button>
+    <button class="pbtn" onclick="filterPay('custom',this)">날짜 지정</button>
+  </div>
+  <div id="pay-date-range" style="display:none;background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <div style="flex:1;min-width:120px;">
+        <label style="font-size:11px;color:#999;font-weight:600;">시작일</label>
+        <input type="date" id="pay-from" style="margin-top:4px;" onchange="renderPay('custom')">
+      </div>
+      <div style="font-size:18px;color:#aaa;padding-top:18px;">~</div>
+      <div style="flex:1;min-width:120px;">
+        <label style="font-size:11px;color:#999;font-weight:600;">종료일</label>
+        <input type="date" id="pay-to" style="margin-top:4px;" onchange="renderPay('custom')">
+      </div>
+    </div>
   </div>
   <div id="pay-summary"></div>
+  <div id="pay-export-btn" style="display:none;">
+    <button class="btn btn-p" onclick="exportPDF()" style="background:linear-gradient(135deg,#185FA5,#0C447C);">
+      📄 PDF로 내보내기
+    </button>
+  </div>
 </div>
 
 <!-- ══ 설정 ══ -->
@@ -288,14 +307,19 @@ function fmtDate(d){
   const dt=new Date(d+'T00:00:00');
   return dt.toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'short'});
 }
+function getMonday(dateStr){
+  const d=new Date(dateStr+'T00:00:00');
+  const day=d.getDay();
+  const diff=day===0?-6:1-day;
+  d.setDate(d.getDate()+diff);
+  return d.toISOString().split('T')[0];
+}
 function filterByPeriod(logs,period){
   const ref=getRefDate();
-  if(period==='today') return logs.filter(l=>l.date===ref);
+  if(period==='today') return logs.filter(l=>l.date===todayStr);
   if(period==='week'){
-    const d=new Date(ref+'T00:00:00');
-    d.setDate(d.getDate()-6);
-    const ds=d.toISOString().split('T')[0];
-    return logs.filter(l=>l.date>=ds&&l.date<=ref);
+    const monStr=getMonday(ref);
+    return logs.filter(l=>l.date>=monStr&&l.date<=ref);
   }
   if(period==='month') return logs.filter(l=>l.date.startsWith(ref.slice(0,7))&&l.date<=ref);
   return logs;
@@ -633,14 +657,78 @@ let curPayFilter='month';
 function filterPay(p,btn){
   curPayFilter=p;
   document.querySelectorAll('#page-pay .pbtn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');renderPay(p);
+  btn.classList.add('active');
+  const rangeEl=document.getElementById('pay-date-range');
+  if(p==='custom'){
+    rangeEl.style.display='block';
+    // 기본값: 해당 월 1일 ~ 기준일
+    const ref=getRefDate();
+    if(!document.getElementById('pay-from').value) document.getElementById('pay-from').value=ref.slice(0,7)+'-01';
+    if(!document.getElementById('pay-to').value) document.getElementById('pay-to').value=ref;
+  } else {
+    rangeEl.style.display='none';
+  }
+  renderPay(p);
+}
+function getPayLogs(period){
+  if(period==='custom'){
+    const from=document.getElementById('pay-from').value;
+    const to=document.getElementById('pay-to').value;
+    if(!from||!to) return [];
+    return state.logs.filter(l=>l.date>=from&&l.date<=to);
+  }
+  return filterByPeriod([...state.logs],period);
 }
 function renderPay(period){
-  const logs=filterByPeriod([...state.logs],period);
+  const logs=getPayLogs(period);
   const total=logs.reduce((s,l)=>s+logTotal(l),0);
   const ref=getRefDate();
   const monthLabel=new Date(ref+'T00:00:00').toLocaleDateString('ko-KR',{year:'numeric',month:'long'});
-  let html=`<div class="total-card"><div class="total-label">${period==='month'?monthLabel:'전체'} 총 지급액</div><div class="total-val">${total.toLocaleString()}원</div></div>`;
+  let periodLabel='전체';
+  if(period==='month') periodLabel=monthLabel;
+  if(period==='custom'){
+    const from=document.getElementById('pay-from').value;
+    const to=document.getElementById('pay-to').value;
+    if(from&&to){
+      const fd=new Date(from+'T00:00:00').toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
+      const td=new Date(to+'T00:00:00').toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
+      periodLabel=fd+' ~ '+td;
+    }
+  }
+
+  let html=`<div class="total-card"><div class="total-label">${periodLabel} 총 지급액</div><div class="total-val">${total.toLocaleString()}원</div></div>`;
+
+  // 날짜별 그룹 (날짜 지정일 때 추가 표시)
+  if(period==='custom'&&logs.length>0){
+    const groups={};
+    logs.forEach(l=>{if(!groups[l.date])groups[l.date]=[];groups[l.date].push(l);});
+    const dates=Object.keys(groups).sort();
+    html+=`<div style="font-size:11px;font-weight:700;color:#999;margin:14px 0 7px;text-transform:uppercase;letter-spacing:.6px;">작업일별 내역</div>`;
+    dates.forEach(date=>{
+      const dl=groups[date];
+      const dAmt=dl.reduce((s,l)=>s+logTotal(l),0);
+      const dQty=dl.reduce((s,l)=>s+logQtyTotal(l),0);
+      html+=`<div style="background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-size:14px;font-weight:700;color:#555;">${fmtDate(date)}</span>
+          <span style="font-size:13px;color:#aaa;">${dQty}개 · ${dAmt.toLocaleString()}원</span>
+        </div>`;
+      dl.forEach(l=>{
+        const badges=state.sizes.map((sz,i)=>{
+          const q=l.qtys[sz.id]||0;if(!q)return '';
+          const c=szColor(i);
+          return `<span class="badge" style="background:${c.bg};color:${c.color};">${sz.name} ${q}개</span>`;
+        }).join('');
+        html+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-top:1px solid #f5f5f5;">
+          <div><span style="font-size:13px;font-weight:600;">${l.worker}</span><div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:3px;">${badges}</div></div>
+          <span style="font-size:13px;font-weight:700;color:#185FA5;">${logTotal(l).toLocaleString()}원</span>
+        </div>`;
+      });
+      html+=`</div>`;
+    });
+    html+=`<div style="font-size:11px;font-weight:700;color:#999;margin:14px 0 7px;text-transform:uppercase;letter-spacing:.6px;">작업자별 합계</div>`;
+  }
+
   state.workers.forEach(w=>{
     const wl=logs.filter(l=>l.worker===w);
     const qty=wl.reduce((s,l)=>s+logQtyTotal(l),0);
@@ -649,7 +737,7 @@ function renderPay(period){
       const c=szColor(i);
       const q=wl.reduce((s,l)=>s+(l.qtys[sz.id]||0),0);
       if(!q)return '';
-      return `<span class="badge" style="background:${c.bg};color:${c.color};margin:2px;">${sz.name} ${q}개</span>`;
+      return `<span class="badge" style="background:${c.bg};color:${c.color};margin:2px;">${sz.name} ${q}개 · ${(q*sz.price).toLocaleString()}원</span>`;
     }).join('');
     html+=`<div class="pay-card">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;">
@@ -662,7 +750,125 @@ function renderPay(period){
       </div>
     </div>`;
   });
+
   document.getElementById('pay-summary').innerHTML=html;
+  document.getElementById('pay-export-btn').style.display=(logs.length>0)?'block':'none';
+}
+
+// ── PDF 내보내기 ──
+function exportPDF(){
+  const logs=getPayLogs(curPayFilter);
+  if(!logs.length){alert('내보낼 데이터가 없습니다.');return;}
+
+  const ref=getRefDate();
+  let periodLabel='전체 기간';
+  if(curPayFilter==='month'){
+    periodLabel=new Date(ref+'T00:00:00').toLocaleDateString('ko-KR',{year:'numeric',month:'long'});
+  } else if(curPayFilter==='custom'){
+    const from=document.getElementById('pay-from').value;
+    const to=document.getElementById('pay-to').value;
+    const fd=new Date(from+'T00:00:00').toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
+    const td=new Date(to+'T00:00:00').toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
+    periodLabel=fd+' ~ '+td;
+  }
+
+  const totalAmt=logs.reduce((s,l)=>s+logTotal(l),0);
+
+  // 날짜별 그룹
+  const groups={};
+  logs.forEach(l=>{if(!groups[l.date])groups[l.date]=[];groups[l.date].push(l);});
+  const dates=Object.keys(groups).sort();
+
+  // 날짜별 테이블 rows
+  let dateRows='';
+  dates.forEach(date=>{
+    const dl=groups[date];
+    const rowspan=dl.length;
+    dl.forEach((l,i)=>{
+      const szCells=state.sizes.map(sz=>`<td style="text-align:right;padding:6px 8px;">${l.qtys[sz.id]||0}</td>`).join('');
+      const amt=logTotal(l);
+      const dateCell=i===0?`<td rowspan="${rowspan}" style="text-align:center;padding:6px 8px;border-right:1px solid #ddd;font-weight:600;background:#f9f9f9;">${new Date(date+'T00:00:00').toLocaleDateString('ko-KR',{month:'long',day:'numeric'})}</td>`:'';
+      dateRows+=`<tr style="border-bottom:1px solid #eee;">${dateCell}<td style="padding:6px 8px;">${l.worker}</td>${szCells}<td style="text-align:right;padding:6px 8px;font-weight:700;color:#185FA5;">${amt.toLocaleString()}원</td></tr>`;
+    });
+  });
+
+  // 작업자별 합계 rows
+  let workerRows='';
+  state.workers.forEach(w=>{
+    const wl=logs.filter(l=>l.worker===w);
+    if(!wl.length)return;
+    const szCells=state.sizes.map(sz=>{
+      const q=wl.reduce((s,l)=>s+(l.qtys[sz.id]||0),0);
+      return `<td style="text-align:right;padding:6px 8px;">${q}</td>`;
+    }).join('');
+    const amt=wl.reduce((s,l)=>s+logTotal(l),0);
+    const qty=wl.reduce((s,l)=>s+logQtyTotal(l),0);
+    workerRows+=`<tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;font-weight:600;">${w}</td>${szCells}<td style="text-align:right;padding:6px 8px;font-weight:700;color:#185FA5;">${amt.toLocaleString()}원</td></tr>`;
+  });
+
+  const sizeHeaders=state.sizes.map(sz=>`<th style="padding:8px;background:#185FA5;color:#fff;text-align:center;">${sz.name}</th>`).join('');
+
+  const now=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
+
+  const pdfHTML=`<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8">
+<title>계량기 교체 작업 지급 내역</title>
+<style>
+  body{font-family:'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif;margin:0;padding:20px;color:#1a1a1a;font-size:13px;}
+  h1{font-size:20px;font-weight:700;color:#185FA5;margin:0 0 4px;}
+  .sub{font-size:13px;color:#666;margin-bottom:20px;}
+  .print-date{font-size:12px;color:#999;text-align:right;margin-bottom:16px;}
+  table{width:100%;border-collapse:collapse;margin-bottom:24px;}
+  th{padding:8px;background:#185FA5;color:#fff;text-align:center;font-size:12px;}
+  td{font-size:12px;}
+  .section-title{font-size:14px;font-weight:700;color:#185FA5;margin:20px 0 8px;padding-bottom:6px;border-bottom:2px solid #185FA5;}
+  .total-box{background:#f0f6ff;border:2px solid #185FA5;border-radius:8px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+  .total-box .tl{font-size:13px;color:#555;}
+  .total-box .tv{font-size:24px;font-weight:800;color:#185FA5;}
+  @media print{body{padding:10px;}button{display:none!important;}}
+</style>
+</head><body>
+<div class="print-date">출력일: ${now}</div>
+<h1>💧 계량기 교체 작업 지급 내역</h1>
+<div class="sub">기간: ${periodLabel}</div>
+<div class="total-box">
+  <div class="tl">총 지급액</div>
+  <div class="tv">${totalAmt.toLocaleString()}원</div>
+</div>
+<div class="section-title">📅 작업일별 상세 내역</div>
+<table>
+  <thead><tr>
+    <th style="width:90px;">작업일</th>
+    <th style="width:70px;">작업자</th>
+    ${sizeHeaders}
+    <th>지급액</th>
+  </tr></thead>
+  <tbody>${dateRows}</tbody>
+</table>
+<div class="section-title">👷 작업자별 합계</div>
+<table>
+  <thead><tr>
+    <th style="width:80px;">작업자</th>
+    ${sizeHeaders}
+    <th>합계</th>
+  </tr></thead>
+  <tbody>${workerRows}</tbody>
+</table>
+<div style="text-align:center;margin-top:30px;">
+  <button onclick="window.print()" style="padding:12px 32px;background:#185FA5;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;">🖨️ 인쇄 / PDF 저장</button>
+</div>
+</body></html>`;
+
+  const blob=new Blob([pdfHTML],{type:'text/html;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const win=window.open(url,'_blank');
+  if(!win){
+    // 팝업 차단 시 다운로드로 대체
+    const a=document.createElement('a');
+    a.href=url; a.download='계량기_지급내역.html';
+    a.click();
+  }
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
 }
 
 // ══ 설정 ══
