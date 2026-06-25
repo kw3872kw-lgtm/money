@@ -13,9 +13,29 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR',sans-serif;background:#f0f2f5;color:#1a1a1a;max-width:480px;margin:0 auto;min-height:100vh;}
-.header{background:#185FA5;padding:calc(env(safe-area-inset-top,0px) + 16px) 16px 14px;}
-.header h1{font-size:20px;font-weight:700;color:#fff;}
-.header p{font-size:12px;color:rgba(255,255,255,0.75);margin-top:2px;}
+/* ── 현장 선택 화면 ── */
+.site-screen{min-height:100vh;display:flex;flex-direction:column;}
+.site-header{background:linear-gradient(135deg,#185FA5,#0C447C);padding:calc(env(safe-area-inset-top,0px)+24px) 20px 24px;}
+.site-header h1{font-size:22px;font-weight:800;color:#fff;}
+.site-header p{font-size:13px;color:rgba(255,255,255,0.75);margin-top:4px;}
+.site-body{flex:1;padding:16px;}
+.site-card{background:#fff;border-radius:16px;padding:16px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all 0.12s;}
+.site-card:active{transform:scale(0.98);background:#f5f9ff;}
+.site-card-left{display:flex;align-items:center;gap:12px;}
+.site-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.site-name{font-size:16px;font-weight:700;}
+.site-sub{font-size:12px;color:#aaa;margin-top:2px;}
+.site-arrow{font-size:20px;color:#ccc;}
+.add-site-btn{width:100%;padding:16px;border-radius:16px;border:2px dashed #c0d4e8;background:transparent;color:#185FA5;font-size:15px;font-weight:600;cursor:pointer;margin-top:4px;}
+.add-site-btn:active{background:#f0f6ff;}
+/* ── 앱 화면 ── */
+.app-screen{display:none;flex-direction:column;min-height:100vh;}
+.app-screen.active{display:flex;}
+.header{background:#185FA5;padding:calc(env(safe-area-inset-top,0px)+12px) 16px 12px;display:flex;align-items:center;gap:10px;}
+.header-back{background:rgba(255,255,255,0.2);border:none;border-radius:10px;padding:6px 10px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;}
+.header-info{flex:1;min-width:0;}
+.header-info h1{font-size:17px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.header-info p{font-size:11px;color:rgba(255,255,255,0.75);margin-top:1px;}
 .tab-bar{display:flex;background:#fff;border-bottom:1px solid #e5e5e5;position:sticky;top:0;z-index:99;box-shadow:0 1px 4px rgba(0,0,0,0.08);}
 .tab{flex:1;padding:10px 2px 8px;font-size:10px;text-align:center;border:none;background:none;color:#aaa;cursor:pointer;border-bottom:2.5px solid transparent;}
 .tab.active{color:#185FA5;border-bottom-color:#185FA5;font-weight:700;}
@@ -39,7 +59,6 @@ select:focus,input:focus{border-color:#185FA5;background:#fff;}
 .btn-o{background:#fff;color:#185FA5;border:1.5px solid #185FA5;}
 .btn-sm{padding:8px 13px;font-size:12px;width:auto;border-radius:9px;}
 .btn-r{background:#fff;color:#E24B4A;border:1.5px solid #E24B4A;}
-/* 구경 입력 그리드 */
 .sz-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;}
 .sz-card{border-radius:14px;border:1.5px solid #e5e5e5;background:#fafafa;padding:12px 10px;}
 .sz-card .sz-name{font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:8px;text-align:center;}
@@ -53,17 +72,13 @@ select:focus,input:focus{border-color:#185FA5;background:#fff;}
 .preview-box{background:linear-gradient(135deg,#E6F1FB,#cfe4f7);border-radius:12px;padding:13px 16px;margin-top:10px;display:none;}
 .preview-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-size:13px;color:#185FA5;}
 .preview-row.total{font-size:16px;font-weight:800;border-top:1px solid rgba(24,95,165,0.2);margin-top:6px;padding-top:8px;}
-/* 배지 */
 .badge{display:inline-block;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700;}
-/* 내역 */
 .pbtn-bar{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
 .pbtn{padding:6px 13px;border-radius:99px;font-size:12px;border:1.5px solid #e5e5e5;background:#fff;color:#888;cursor:pointer;font-weight:500;}
 .pbtn.active{background:#185FA5;color:#fff;border-color:#185FA5;font-weight:700;}
-/* 내역 탭 */
 .sub-tab-bar{display:flex;background:#f0f2f5;border-radius:12px;padding:3px;margin-bottom:12px;}
 .sub-tab{flex:1;padding:8px 4px;font-size:12px;font-weight:600;text-align:center;border:none;background:none;color:#aaa;border-radius:9px;cursor:pointer;}
 .sub-tab.active{background:#fff;color:#185FA5;box-shadow:0 1px 3px rgba(0,0,0,.1);}
-/* 날짜 그룹 */
 .date-group{margin-bottom:12px;}
 .date-header{font-size:13px;font-weight:700;color:#555;margin-bottom:6px;padding:0 2px;display:flex;justify-content:space-between;align-items:center;}
 .date-header span{font-size:12px;color:#aaa;font-weight:500;}
@@ -73,19 +88,16 @@ select:focus,input:focus{border-color:#185FA5;background:#fff;}
 .lc-amount{font-size:15px;font-weight:800;color:#185FA5;}
 .lc-badges{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;}
 .lc-actions{display:flex;gap:6px;margin-top:8px;}
-/* 작업자별 */
 .wlog-card{background:#fff;border-radius:14px;padding:14px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
 .wlog-top{display:flex;align-items:center;margin-bottom:10px;}
 .avatar{width:40px;height:40px;border-radius:50%;background:#E6F1FB;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#185FA5;flex-shrink:0;margin-right:11px;}
 .wlog-rows{border-top:1px solid #f3f3f3;padding-top:8px;}
 .wlog-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:13px;border-bottom:1px solid #f8f8f8;}
 .wlog-row:last-child{border-bottom:none;}
-/* 수정 모달 */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:flex-end;}
-.modal{background:#fff;border-radius:20px 20px 0 0;padding:20px 16px calc(env(safe-area-inset-bottom,0px) + 24px);width:100%;max-height:85vh;overflow-y:auto;}
+.modal{background:#fff;border-radius:20px 20px 0 0;padding:20px 16px calc(env(safe-area-inset-bottom,0px)+24px);width:100%;max-height:85vh;overflow-y:auto;}
 .modal-title{font-size:17px;font-weight:700;margin-bottom:16px;}
 .modal-close{float:right;background:none;border:none;font-size:24px;color:#aaa;cursor:pointer;margin-top:-4px;}
-/* 홈 날짜별 */
 .day-card{background:#fff;border-radius:14px;padding:14px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);cursor:pointer;}
 .day-header{display:flex;justify-content:space-between;align-items:center;}
 .day-date{font-size:14px;font-weight:700;}
@@ -94,7 +106,6 @@ select:focus,input:focus{border-color:#185FA5;background:#fff;}
 .day-detail.open{display:block;}
 .empty{text-align:center;padding:44px 16px;color:#ccc;font-size:14px;}
 .empty span{font-size:40px;display:block;margin-bottom:10px;}
-/* 총합 카드 */
 .total-card{background:linear-gradient(135deg,#185FA5,#0C447C);border-radius:16px;padding:20px;margin-bottom:12px;}
 .total-label{font-size:13px;color:rgba(255,255,255,.8);margin-bottom:4px;font-weight:500;}
 .total-val{font-size:32px;font-weight:800;color:#fff;}
@@ -103,166 +114,189 @@ select:focus,input:focus{border-color:#185FA5;background:#fff;}
 .price-row:last-child{border-bottom:none;}
 .add-row{display:flex;gap:8px;margin-top:12px;align-items:center;}
 .add-row input{flex:1;}
+/* 현장 설정 */
+.site-del-btn{background:none;border:none;font-size:20px;color:#ddd;cursor:pointer;}
+.color-dot{width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:6px;}
+/* 전체 현황 탭 */
+.main-tab-bar{display:flex;background:rgba(255,255,255,0.15);border-radius:12px;padding:3px;margin:12px 0 0;}
+.main-tab{flex:1;padding:9px 4px;font-size:13px;font-weight:600;text-align:center;border:none;background:none;color:rgba(255,255,255,0.7);border-radius:9px;cursor:pointer;}
+.main-tab.active{background:#fff;color:#185FA5;box-shadow:0 1px 4px rgba(0,0,0,0.15);}
+.summary-view{display:none;}
+.summary-view.active{display:block;}
+.sum-month-bar{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
+.sum-pbtn{padding:6px 13px;border-radius:99px;font-size:12px;border:1.5px solid #e5e5e5;background:#fff;color:#888;cursor:pointer;font-weight:500;}
+.sum-pbtn.active{background:#185FA5;color:#fff;border-color:#185FA5;font-weight:700;}
+.sum-total-card{background:linear-gradient(135deg,#185FA5,#0C447C);border-radius:16px;padding:18px 20px;margin-bottom:12px;}
+.sum-total-label{font-size:12px;color:rgba(255,255,255,.8);margin-bottom:4px;font-weight:500;}
+.sum-total-val{font-size:28px;font-weight:800;color:#fff;}
+.sum-section{font-size:11px;font-weight:700;color:#999;margin:14px 0 8px;text-transform:uppercase;letter-spacing:.6px;}
+.sum-card{background:#fff;border-radius:14px;padding:0;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden;}
+.sum-card-header{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;border-bottom:1px solid #f3f3f3;}
+.sum-card-body{padding:0 16px 12px;display:none;}
+.sum-card-body.open{display:block;}
+.sum-worker-row{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #f8f8f8;}
+.sum-worker-row:last-child{border-bottom:none;}
+.sum-site-tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:600;margin-bottom:3px;}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>💧 계량기 교체 관리</h1>
-  <p id="today-date"></p>
-</div>
-
-<div class="tab-bar">
-  <button class="tab active" onclick="showPage('home')"><i>🏠</i>홈</button>
-  <button class="tab" onclick="showPage('input')"><i>✏️</i>입력</button>
-  <button class="tab" onclick="showPage('logs')"><i>📋</i>내역</button>
-  <button class="tab" onclick="showPage('pay')"><i>💰</i>지급</button>
-  <button class="tab" onclick="showPage('settings')"><i>⚙️</i>설정</button>
-</div>
-
-<!-- ══ 홈 ══ -->
-<div id="page-home" class="page active">
-  <div class="mgrid" style="margin-top:4px;">
-    <div class="mbox"><div class="mlabel" id="lbl-today">최근 작업일</div><div class="mval b" id="m-today">0개</div></div>
-    <div class="mbox"><div class="mlabel" id="lbl-month">이번 달 수량</div><div class="mval" id="m-month">0개</div></div>
-    <div class="mbox"><div class="mlabel" id="lbl-pay">이번 달 지급액</div><div class="mval b" style="font-size:17px;" id="m-pay">0원</div></div>
-    <div class="mbox"><div class="mlabel">총 작업 건수</div><div class="mval" id="m-total">0건</div></div>
-  </div>
-  <div class="sec" id="sec-workers">작업자별 현황</div>
-  <div class="card" id="home-workers"></div>
-  <div class="sec">작업일별 현황</div>
-  <div class="pbtn-bar">
-    <button class="pbtn active" onclick="filterHomeDays('month',this)">이번 달</button>
-    <button class="pbtn" onclick="filterHomeDays('week',this)">이번 주</button>
-    <button class="pbtn" onclick="filterHomeDays('all',this)">전체</button>
-  </div>
-  <div id="home-days"></div>
-</div>
-
-<!-- ══ 입력 ══ -->
-<div id="page-input" class="page">
-  <div class="sec" style="margin-top:0;">작업 내역 입력</div>
-  <div class="card">
-    <div class="frow"><label>작업일</label><input type="date" id="input-date"></div>
-    <div class="frow"><label>작업자</label><select id="input-worker"><option value="">— 선택 —</option></select></div>
-    <div class="frow">
-      <label>구경별 교체 수량</label>
-      <div class="sz-grid" id="sz-grid"></div>
+<!-- ══ 현장 선택 화면 ══ -->
+<div class="site-screen" id="site-screen">
+  <div class="site-header">
+    <h1>💧 계량기 교체 관리</h1>
+    <p id="site-today"></p>
+    <div class="main-tab-bar">
+      <button class="main-tab active" onclick="switchMainTab('sites',this)">🏗️ 현장 목록</button>
+      <button class="main-tab" onclick="switchMainTab('summary',this)">📊 전체 합산</button>
     </div>
-    <div class="preview-box" id="preview-box">
-      <div id="preview-rows"></div>
+  </div>
+  <div class="site-body">
+    <!-- 현장 목록 뷰 -->
+    <div class="summary-view active" id="view-sites">
+      <div class="sec">현장 선택</div>
+      <div id="site-list"></div>
+      <button class="add-site-btn" onclick="openAddSite()">＋ 새 현장 추가</button>
     </div>
-    <button class="btn btn-p" onclick="addLog()">✅ 작업 등록</button>
+    <!-- 전체 합산 뷰 -->
+    <div class="summary-view" id="view-summary">
+      <div class="sum-month-bar" id="sum-month-bar"></div>
+      <div id="summary-content"></div>
+    </div>
   </div>
 </div>
 
-<!-- ══ 내역 ══ -->
-<div id="page-logs" class="page">
-  <div class="sub-tab-bar">
-    <button class="sub-tab active" onclick="switchLogView('date',this)">📅 날짜별</button>
-    <button class="sub-tab" onclick="switchLogView('worker',this)">👷 작업자별</button>
+<!-- ══ 앱 화면 ══ -->
+<div class="app-screen" id="app-screen">
+  <div class="header">
+    <button class="header-back" onclick="goSiteSelect()">◀ 현장</button>
+    <div class="header-info">
+      <h1 id="app-site-name"></h1>
+      <p id="today-date"></p>
+    </div>
   </div>
-  <!-- 날짜별 -->
-  <div id="logs-date-view">
+  <div class="tab-bar">
+    <button class="tab active" onclick="showPage('home')"><i>🏠</i>홈</button>
+    <button class="tab" onclick="showPage('input')"><i>✏️</i>입력</button>
+    <button class="tab" onclick="showPage('logs')"><i>📋</i>내역</button>
+    <button class="tab" onclick="showPage('pay')"><i>💰</i>지급</button>
+    <button class="tab" onclick="showPage('settings')"><i>⚙️</i>설정</button>
+  </div>
+
+  <!-- 홈 -->
+  <div id="page-home" class="page active">
+    <div class="mgrid" style="margin-top:4px;">
+      <div class="mbox"><div class="mlabel" id="lbl-today">최근 작업일</div><div class="mval b" id="m-today">0개</div></div>
+      <div class="mbox"><div class="mlabel" id="lbl-month">이번 달 수량</div><div class="mval" id="m-month">0개</div></div>
+      <div class="mbox"><div class="mlabel" id="lbl-pay">이번 달 지급액</div><div class="mval b" style="font-size:17px;" id="m-pay">0원</div></div>
+      <div class="mbox"><div class="mlabel">총 작업 건수</div><div class="mval" id="m-total">0건</div></div>
+    </div>
+    <div class="sec" id="sec-workers">작업자별 현황</div>
+    <div class="card" id="home-workers"></div>
+    <div class="sec">작업일별 현황</div>
     <div class="pbtn-bar">
-      <button class="pbtn active" onclick="filterLogs('all',this)">전체</button>
-      <button class="pbtn" onclick="filterLogs('today',this)">오늘</button>
-      <button class="pbtn" onclick="filterLogs('week',this)">이번 주</button>
-      <button class="pbtn" onclick="filterLogs('month',this)">이번 달</button>
+      <button class="pbtn active" onclick="filterHomeDays('month',this)">이번 달</button>
+      <button class="pbtn" onclick="filterHomeDays('week',this)">이번 주</button>
+      <button class="pbtn" onclick="filterHomeDays('all',this)">전체</button>
     </div>
-    <div id="log-list"></div>
+    <div id="home-days"></div>
   </div>
-  <!-- 작업자별 -->
-  <div id="logs-worker-view" style="display:none;">
-    <div class="frow"><select id="log-worker-select" onchange="renderWorkerLogs()"><option value="">— 작업자 선택 —</option></select></div>
+
+  <!-- 입력 -->
+  <div id="page-input" class="page">
+    <div class="sec" style="margin-top:0;">작업 내역 입력</div>
+    <div class="card">
+      <div class="frow"><label>작업일</label><input type="date" id="input-date"></div>
+      <div class="frow"><label>작업자</label><select id="input-worker"><option value="">— 선택 —</option></select></div>
+      <div class="frow">
+        <label>구경별 교체 수량</label>
+        <div class="sz-grid" id="sz-grid"></div>
+      </div>
+      <div class="preview-box" id="preview-box"><div id="preview-rows"></div></div>
+      <button class="btn btn-p" onclick="addLog()">✅ 작업 등록</button>
+    </div>
+  </div>
+
+  <!-- 내역 -->
+  <div id="page-logs" class="page">
+    <div class="sub-tab-bar">
+      <button class="sub-tab active" onclick="switchLogView('date',this)">📅 날짜별</button>
+      <button class="sub-tab" onclick="switchLogView('worker',this)">👷 작업자별</button>
+    </div>
+    <div id="logs-date-view">
+      <div class="pbtn-bar">
+        <button class="pbtn active" onclick="filterLogs('all',this)">전체</button>
+        <button class="pbtn" onclick="filterLogs('today',this)">오늘</button>
+        <button class="pbtn" onclick="filterLogs('week',this)">이번 주</button>
+        <button class="pbtn" onclick="filterLogs('month',this)">이번 달</button>
+      </div>
+      <div id="log-list"></div>
+    </div>
+    <div id="logs-worker-view" style="display:none;">
+      <div class="frow"><select id="log-worker-select" onchange="renderWorkerLogs()"><option value="">— 작업자 선택 —</option></select></div>
+      <div class="pbtn-bar">
+        <button class="pbtn active" onclick="filterWorkerLogs('all',this)">전체</button>
+        <button class="pbtn" onclick="filterWorkerLogs('today',this)">오늘</button>
+        <button class="pbtn" onclick="filterWorkerLogs('week',this)">이번 주</button>
+        <button class="pbtn" onclick="filterWorkerLogs('month',this)">이번 달</button>
+      </div>
+      <div id="worker-log-list"></div>
+    </div>
+  </div>
+
+  <!-- 지급 -->
+  <div id="page-pay" class="page">
     <div class="pbtn-bar">
-      <button class="pbtn active" onclick="filterWorkerLogs('all',this)">전체</button>
-      <button class="pbtn" onclick="filterWorkerLogs('today',this)">오늘</button>
-      <button class="pbtn" onclick="filterWorkerLogs('week',this)">이번 주</button>
-      <button class="pbtn" onclick="filterWorkerLogs('month',this)">이번 달</button>
+      <button class="pbtn active" onclick="filterPay('month',this)">이번 달</button>
+      <button class="pbtn" onclick="filterPay('all',this)">전체</button>
+      <button class="pbtn" onclick="filterPay('custom',this)">날짜 지정</button>
     </div>
-    <div id="worker-log-list"></div>
-  </div>
-</div>
-
-<!-- ══ 지급 ══ -->
-<div id="page-pay" class="page">
-  <div class="pbtn-bar">
-    <button class="pbtn active" onclick="filterPay('month',this)">이번 달</button>
-    <button class="pbtn" onclick="filterPay('all',this)">전체</button>
-    <button class="pbtn" onclick="filterPay('custom',this)">날짜 지정</button>
-  </div>
-  <div id="pay-date-range" style="display:none;background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);">
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-      <div style="flex:1;min-width:120px;">
-        <label style="font-size:11px;color:#999;font-weight:600;">시작일</label>
-        <input type="date" id="pay-from" style="margin-top:4px;" onchange="renderPay('custom')">
-      </div>
-      <div style="font-size:18px;color:#aaa;padding-top:18px;">~</div>
-      <div style="flex:1;min-width:120px;">
-        <label style="font-size:11px;color:#999;font-weight:600;">종료일</label>
-        <input type="date" id="pay-to" style="margin-top:4px;" onchange="renderPay('custom')">
+    <div id="pay-date-range" style="display:none;background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <div style="flex:1;min-width:120px;"><label style="font-size:11px;color:#999;font-weight:600;">시작일</label><input type="date" id="pay-from" style="margin-top:4px;" onchange="renderPay('custom')"></div>
+        <div style="font-size:18px;color:#aaa;padding-top:18px;">~</div>
+        <div style="flex:1;min-width:120px;"><label style="font-size:11px;color:#999;font-weight:600;">종료일</label><input type="date" id="pay-to" style="margin-top:4px;" onchange="renderPay('custom')"></div>
       </div>
     </div>
+    <div id="pay-summary"></div>
+    <div id="pay-export-btn" style="display:none;">
+      <button class="btn btn-p" onclick="exportPDF()" style="background:linear-gradient(135deg,#185FA5,#0C447C);">📄 PDF로 내보내기</button>
+    </div>
   </div>
-  <div id="pay-summary"></div>
-  <div id="pay-export-btn" style="display:none;">
-    <button class="btn btn-p" onclick="exportPDF()" style="background:linear-gradient(135deg,#185FA5,#0C447C);">
-      📄 PDF로 내보내기
-    </button>
+
+  <!-- 설정 -->
+  <div id="page-settings" class="page">
+    <div class="sec" style="margin-top:0;">현장 정보</div>
+    <div class="card">
+      <div class="frow"><label>현장명</label><input type="text" id="settings-site-name" placeholder="현장명 입력"></div>
+      <button class="btn btn-o btn-sm" onclick="saveSiteName()">✅ 현장명 저장</button>
+    </div>
+    <div class="sec">작업자 관리</div>
+    <div class="card">
+      <div id="worker-list"></div>
+      <div class="add-row"><input type="text" id="new-worker" placeholder="작업자 이름 입력"><button class="btn btn-o btn-sm" onclick="addWorker()">추가</button></div>
+    </div>
+    <div class="sec">구경별 단가 설정</div>
+    <div class="card" id="price-list"></div>
+    <div class="sec">현장 데이터</div>
+    <div class="card">
+      <button class="btn btn-r btn-sm" onclick="clearData()">🗑 이 현장 데이터 초기화</button>
+    </div>
   </div>
 </div>
 
-<!-- ══ 설정 ══ -->
-<div id="page-settings" class="page">
-  <div class="sec" style="margin-top:0;">작업자 관리</div>
-  <div class="card">
-    <div id="worker-list"></div>
-    <div class="add-row"><input type="text" id="new-worker" placeholder="작업자 이름 입력"><button class="btn btn-o btn-sm" onclick="addWorker()">추가</button></div>
-  </div>
-  <div class="sec">구경별 단가 설정</div>
-  <div class="card" id="price-list"></div>
-  <div class="sec">앱 관리</div>
-  <div class="card">
-    <button class="btn btn-r btn-sm" onclick="clearData()">🗑 데이터 초기화</button>
-  </div>
-</div>
-
-<!-- ══ 수정 모달 ══ -->
+<!-- 현장 추가 모달 -->
 <div id="modal-overlay" class="modal-overlay" style="display:none;" onclick="closeModal(event)">
   <div class="modal" id="modal-content">
     <button class="modal-close" onclick="closeModal()">✕</button>
-    <div class="modal-title" id="modal-title">작업 수정</div>
+    <div class="modal-title" id="modal-title">새 현장 추가</div>
     <div id="modal-body"></div>
   </div>
 </div>
 
 <script>
-
-// ── 사전 입력 데이터 ──
-(function(){
-  try {
-    const existing = localStorage.getItem('meterapp2');
-    if(existing){
-      // 이미 데이터가 있으면 단가(sizes)는 건드리지 않고 작업자·로그만 초기 데이터로 채움
-      // (단, 로그가 비어있을 때만 초기 로그 적용)
-      const parsed = JSON.parse(existing);
-      if(!parsed.logs || parsed.logs.length === 0){
-        const init = JSON.parse('{"workers":["김영진","이광득","신현일"],"logs":[{"id":1700000000000,"date":"2026-05-18","worker":"김영진","qtys":{"s1":14,"s2":0,"s3":0,"s4":0}},{"id":1700000000001,"date":"2026-05-20","worker":"김영진","qtys":{"s1":20,"s2":1,"s3":0,"s4":0}},{"id":1700000000002,"date":"2026-05-21","worker":"김영진","qtys":{"s1":43,"s2":0,"s3":0,"s4":0}},{"id":1700000000003,"date":"2026-05-26","worker":"김영진","qtys":{"s1":45,"s2":1,"s3":0,"s4":0}},{"id":1700000000004,"date":"2026-05-28","worker":"김영진","qtys":{"s1":22,"s2":0,"s3":1,"s4":0}},{"id":1700000000005,"date":"2026-05-29","worker":"김영진","qtys":{"s1":28,"s2":2,"s3":0,"s4":0}},{"id":1700000000006,"date":"2026-05-30","worker":"김영진","qtys":{"s1":29,"s2":0,"s3":0,"s4":0}},{"id":1700000000007,"date":"2026-05-31","worker":"김영진","qtys":{"s1":42,"s2":0,"s3":0,"s4":0}},{"id":1700000000008,"date":"2026-06-02","worker":"김영진","qtys":{"s1":22,"s2":0,"s3":0,"s4":0}},{"id":1700000000009,"date":"2026-06-02","worker":"이광득","qtys":{"s1":22,"s2":0,"s3":0,"s4":0}},{"id":1700000000010,"date":"2026-06-04","worker":"김영진","qtys":{"s1":4,"s2":1,"s3":0,"s4":0}},{"id":1700000000011,"date":"2026-06-04","worker":"이광득","qtys":{"s1":25,"s2":1,"s3":0,"s4":0}},{"id":1700000000012,"date":"2026-06-04","worker":"신현일","qtys":{"s1":14,"s2":0,"s3":0,"s4":0}},{"id":1700000000013,"date":"2026-06-06","worker":"이광득","qtys":{"s1":30,"s2":0,"s3":0,"s4":0}},{"id":1700000000014,"date":"2026-06-06","worker":"신현일","qtys":{"s1":17,"s2":1,"s3":0,"s4":0}},{"id":1700000000015,"date":"2026-06-08","worker":"김영진","qtys":{"s1":31,"s2":0,"s3":2,"s4":0}},{"id":1700000000016,"date":"2026-06-08","worker":"이광득","qtys":{"s1":14,"s2":1,"s3":0,"s4":0}},{"id":1700000000017,"date":"2026-06-08","worker":"신현일","qtys":{"s1":15,"s2":0,"s3":0,"s4":0}}]}');
-        parsed.workers = init.workers;
-        parsed.logs = init.logs;
-        localStorage.setItem('meterapp2', JSON.stringify(parsed));
-      }
-      // sizes(단가)는 기존 저장값 그대로 유지 → 수정한 단가 보존
-    } else {
-      // 최초 실행: 전체 초기 데이터 세팅 (단가 14000 포함)
-      localStorage.setItem('meterapp2', '{"workers":["김영진","이광득","신현일"],"sizes":[{"id":"s1","name":"13mm","price":14000},{"id":"s2","name":"20~32mm","price":14000},{"id":"s3","name":"40~50mm","price":14000},{"id":"s4","name":"기타","price":14000}],"logs":[{"id":1700000000000,"date":"2026-05-18","worker":"김영진","qtys":{"s1":14,"s2":0,"s3":0,"s4":0}},{"id":1700000000001,"date":"2026-05-20","worker":"김영진","qtys":{"s1":20,"s2":1,"s3":0,"s4":0}},{"id":1700000000002,"date":"2026-05-21","worker":"김영진","qtys":{"s1":43,"s2":0,"s3":0,"s4":0}},{"id":1700000000003,"date":"2026-05-26","worker":"김영진","qtys":{"s1":45,"s2":1,"s3":0,"s4":0}},{"id":1700000000004,"date":"2026-05-28","worker":"김영진","qtys":{"s1":22,"s2":0,"s3":1,"s4":0}},{"id":1700000000005,"date":"2026-05-29","worker":"김영진","qtys":{"s1":28,"s2":2,"s3":0,"s4":0}},{"id":1700000000006,"date":"2026-05-30","worker":"김영진","qtys":{"s1":29,"s2":0,"s3":0,"s4":0}},{"id":1700000000007,"date":"2026-05-31","worker":"김영진","qtys":{"s1":42,"s2":0,"s3":0,"s4":0}},{"id":1700000000008,"date":"2026-06-02","worker":"김영진","qtys":{"s1":22,"s2":0,"s3":0,"s4":0}},{"id":1700000000009,"date":"2026-06-02","worker":"이광득","qtys":{"s1":22,"s2":0,"s3":0,"s4":0}},{"id":1700000000010,"date":"2026-06-04","worker":"김영진","qtys":{"s1":4,"s2":1,"s3":0,"s4":0}},{"id":1700000000011,"date":"2026-06-04","worker":"이광득","qtys":{"s1":25,"s2":1,"s3":0,"s4":0}},{"id":1700000000012,"date":"2026-06-04","worker":"신현일","qtys":{"s1":14,"s2":0,"s3":0,"s4":0}},{"id":1700000000013,"date":"2026-06-06","worker":"이광득","qtys":{"s1":30,"s2":0,"s3":0,"s4":0}},{"id":1700000000014,"date":"2026-06-06","worker":"신현일","qtys":{"s1":17,"s2":1,"s3":0,"s4":0}},{"id":1700000000015,"date":"2026-06-08","worker":"김영진","qtys":{"s1":31,"s2":0,"s3":2,"s4":0}},{"id":1700000000016,"date":"2026-06-08","worker":"이광득","qtys":{"s1":14,"s2":1,"s3":0,"s4":0}},{"id":1700000000017,"date":"2026-06-08","worker":"신현일","qtys":{"s1":15,"s2":0,"s3":0,"s4":0}}]}');
-    }
-  } catch(e) {}
-})();
-
-// ── PWA setup ──
-const SW=`const C='meter-v2';self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['./'])));self.skipWaiting();});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))));self.clients.claim();});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>caches.match('./'))));  });`;
+// ── PWA ──
+const SW=`const C='meter-v3';self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['./'])));self.skipWaiting();});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))));self.clients.claim();});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>caches.match('./'))));  });`;
 if('serviceWorker' in navigator){const b=new Blob([SW],{type:'text/javascript'});navigator.serviceWorker.register(URL.createObjectURL(b)).catch(()=>{});}
 const MF={name:'계량기 교체 관리',short_name:'계량기관리',start_url:'./',display:'standalone',orientation:'portrait',background_color:'#185FA5',theme_color:'#185FA5',lang:'ko',icons:[
   {src:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAYAAABV7bNHAAACCUlEQVR4nO2cwXGDQAxFBeMiwjnlpAN8CD2kjvSAD6GDlOMz7iK5hHhN8Iox0pc26J08xhbs42sBj6GiDE+vH1+55f+Fy+lY3Vu2uGAvYuYsibp5Y69i5qSi6ulFyLmSuqhzHwx+BEV6/jI5iQQxVJGePJEghhDEEIIYQhBDCGIIQQzuBI19a70JN7gS5E0OkTNBE55EuRHkSUqKG0FzvAhzIciLjCVcCLqHB3HmgjxIyGEuiMNaoKkg68GvwX2CiGxFmgkqIT1EhSSIyE6oiaBS0kNkIGiLHAuxxbSYFVBBEglAp6jIBCElwQRJDwolCSJIazAISeqCtAehXV9VEKoNNNdzUKu8QNMNZ6laY98+S9XKoZag+V6VlLNUTytFRR7mkSAP86ItgWoxlT9QWV6MNt0gWg86SRMRNd3wubXG2LcvEtuyBugcJCFHss4aYpJmQF/Ni7QGssXgcxBycBLABRERNd3w/uh3x759k9wWDpUWyx1qt8jhvi99iCeKSZrF4kf7TS2CbjHVWxGQZ9Qa7UUULcaiKkhrryLXo54gbUna9SEtpjUIREJhc5D0YFDti76ad1VnDWZ3HD5yCoAUM+HilsycLAspKS4EeSZOFBlCEEMIYghBDCGIoc49XGjvXE7HKhLEUBPlH1G1VyYnkSCGX0GRoiupi3jIWwL7kLc5exGV655vhmyrF6+i7dEAAAAASUVORK5CYII=',sizes:'72x72',type:'image/png'},
@@ -270,26 +304,19 @@ const MF={name:'계량기 교체 관리',short_name:'계량기관리',start_url:
   {src:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAADtUlEQVR4nO2cy3EbMRBEhywHYZ4djjOgDmYOjsM5UAcxA4fjM5WFfVCtTS9/2A+Anu5+V2qFWfSbgZZFahMz+Pzt7fec60xd3l9fNlOvKb7AoeeiVIanP+Tgc/NMhO2jFx1+fp5leNMOB8/JrWlwNQEcPi+3sn14BBh+/hPA3c/POOPtvRcML5dZ+wgQZxvh7ldkyNwTQBwLIM7G418bTwBxLIA4FkAcCyCOBRDHAohjAcSxAOJYAHEsgDgWQBx5Ac7Hfe8SuiItwBC+sgTSAhhhAcZdrzoFZAUwH0gKcK/bFaeApADmH3ICPOtytSkgJYBauCVICVCKkigyAiiFOgUZAaaiIoyEAHPDVJBAQgBzH3oBlnYx+xSgFoA9vDWgFmAtmEWiFYA5tDWhFWBtWIWiFIA1rBpQClALRrHoBGAMqSZUArQIn00wKgFawSQBjQBMobSERoDWsAhHIQBLGD2gEKAXDOKlF6B3CL3XX0pqAVA2H6WOOaT8T6HIG747nHqXMIl0EwA5/Aj8+sakEiDL5mapMyKZAGZ90giQqasi8tSbQoAsmzkmQ93wAmTYxEeg1w8vgKkLtADo3VMK8n186l3AGuwOp1891z8f9196rr8E2AlQ2jW9wy+tAXUKwApQAkL4A0i1TAFSANRuWQrifUEKUArS2YtUyxRSCxCBsfEINcyF4ikgcwC9gZsAiOfkmqDdH5wApi0UR8DA7nD62Wqt83H/tdVaNaGZAC3D77FeLSgE6BUGgwQUApj5UAjQ6zxm+DuAQoCI9mEwhB9B9hTAEkpLaCaAmYcFEAfyq2FrvF26O5x+rFDKFefj/vuS69G+OkY5AWqFX/t394BOgBYBMUlAJ4CZBqQAS87JpWd0zTXQzv8IUAGWUlOCFoK1BPIpYADtwxNLQOz+CNIJYMqBFgC1a6aCfB/QApj6wAuA3D0loNcPL0AE/ibeI0PdKQSIyLGZl2SpN40Apg6pBMjSVVnqjEgmQAT+5qLXNwb6ncBnIL1TmC34gXQT4BKUTUepYw6pBYjov/m9119K6iNgTMsjIXvwA1QCDNQUgSX4AUoBBtYUgS34AWoBxkwRgjXwMVICmGvSPwWYZVgAcSyAOBZAHAsgjgUQxwKIYwHEsQDibN9fXza9izB9eH992XgCiGMBxNlGfIyC3oWYtgyZewKI81cATwEdLrPe3nvBcDLO2EeAOFcCeArwcivbh2H742IcPGrqh0eAp0F+nmVYHLCnQS5Km3dWh1sGTOZM7D8FJS3SzrS3WwAAAABJRU5ErkJggg==',sizes:'128x128',type:'image/png'},
   {src:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJAAAACQCAYAAADnRuK4AAAEKElEQVR4nO3cwXnTQBCG4bUfikjOlEMHziHugTrowTnEHVAOZ6eLcAgCoUjWSqPV7j/zvdfYeOT9vJKI4ZBWenh+fV/7XLTn7eXpsOZ5i55ENDEsiSnrgYQTU05Ix7kHEE9cOWt/NyDiwVwDkwERDzr3WhgNiHgwNNXEp4CIB1PG2jjOPQDoGzZynPoBMKXfyuxtPHDPMSV2HyzXNcMOBBMCgsmB0xcs2IFgQkAwISCYEBBMCAgmBAQTAoIJAcGEgGBCQDAhIJgQEEwICCYENON2OdUeoWkEdEcXDxFNIyCYENCE4a7DLjSOgGBCQCOmdht2oc8ICCYENDC3y7AL/Y+AYEJAPbm7C7vQPwT0B1GsQ0ArEdwHAkrEYEFABoRHQOYIokcUPiDYhA5oq90j8i4UNqDIi76lsAFtLWqQIQOKutglhAyolIhhhgso4iKXFC6g0qIFGiqgaIu7h1AB7SVSqGEC2ntRo0QUIqAoi1lDiIBqiRCu+4AiLGJN7gOqzXvArgPyvngtcB1QKzyH7DYgz4vWEpcBtRhPizNtwV1ALS/U7XJqer41XAWksjgqc+ZwE5DaoqjNO8VFQKqLoTp3n3xA6ougPr98QKhLOiD1T29H+ThkA1J+08eoHo9kQKpv9hzF45IMCO04PDy/vtceYoncT+nj+fqr8CiL3S6nrzmPezxfS4+yGZc7UIvxpNTuXBZSAeXsPq0vUs58StdCUgGhPQQEE5mAFvwfzlkXqrXkzqdyGpMJaIlWI2p1LosvtQcoxeNitcjlDoT9SASkcj2wNYXjdnsK63s8X3/WfP3b5fSt5uuXJLEDWdSOp5UZSnEdUEsL19IsW3IdEMojIJi4Dqili9eWZtmS64BSamPhWpihlBC38Z4XsDb3OxDKIiCYyHwneou/1n88X39sMEqW2+X03fpnKHw3OswOtGc8NV6vlhAB1VrMCBGFCAjlyASkcD2wJZXjlQnIYosLWqXX3VOIgFLafzEjxJOS0G18R+FbelYqp6+UAu1AKEMuIKVP5xpqxycXENoiGZDapzSX4nFJBpSS5pt9j+rxyAaUku6bPqR8HNIBoT75gJQ/vSnpzy8fUEq6i6A6d5+LgFLSWwy1eae4CSglnUVRmTOH3O/CcrX4OzNP4XRc7UB9rS1Wa/NsxW1AKbWzaK3MUYLbU9hQjVOa53A6YQLq7BFShHA64QLq2zKmSNH0hQ5oaElQUYMZIiCYuL4LQ3kEBBMCggkBwYSAYEJAMCEgmBAQTAgIJgQEEwKCyfHt5elQewhoent5OrADwYSAYHJM6WMrqj0ItHTNsAPB5G9A7ELI1W/lOPUDYMywkU+nMCLClLE2Rq+BiAhDU01MXkQTETr3Wrh7F0ZEmGtg9jaeiOLKWftFcfBvyGJYsmms3l2IyZe1Z5rfAzlRdl+tRgwAAAAASUVORK5CYII=',sizes:'144x144',type:'image/png'},
   {src:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJgAAACYCAYAAAAYwiAhAAAEUUlEQVR4nO3du3HbQBCA4SXHRZixy3EHVGD24DrcAxWIHbgcx1QXdiDDhkAAOjz2bh//l0oc3ul+LDCckXSQDT5/e/m95fXw4fX56bD2tYtfSFS5LY2t+JsJC32loR1Lvom4MFTaxGyFhIUSc9NscoIRF0rNtTIaGHFhqalmHgIjLqw11k7RQz6w1rvAmF7YatjQceoLwFr9lrhFQtVRhOmF/XVNMcGgisCg6sDtEZqYYFBFYFBFYFBFYFBFYFBFYFBFYFBFYFBFYFBFYFBFYFBFYFBFYFBFYFBFYAvdr+fWS3CFwBbo4iKycgQGVQRWaDi1mGJlCAyqCKzA1LRiin2MwKCKwD7w0ZRiis0jsBnEsx2B7YAQpxHYBKLZB4HthCDHEdiItbEQ2SMCgyoCG9g6hZhi7xFYD3Hsj8AUEOp/BPYXUeggMCUE+4bAhBg0EZgiwiUw9QiyR5Y6sOyHX0PqwGrJHHLawDIfek1pA6sta9ApA8t62C2kDKyVjGGnCyzjIbeULrDWsgWeKrBsh2tBmsAsxWVpLdrSBGZNlshSBJblMC1KEZhVGcIPH5j1Q7S+vq3C/ktljwd3utxaL2F3ISeYx7hE/K57TrjAvB+S9/UPhQosyuFE2YdIsMBgT5jAIl31InH2EyKwKIcxFGFf7gOLcAhzvO/PfWCwzXVg3q/uUp73+an1Amo4XW6/Wq9hyv16/tJ6DZrcTrDSq9pyXCLl6/M6xdwGVsJ6XB0v61zDZWBer+atPO7bZWDwI3RgXh6gvaxzDXeBLb1NWD+8pevzdptM8TGF9cgiczfB4AuBQZWrwLw9f2jx9HNI8QzWd7rcfrZew/16/tp6DbW4mmBbWYhLxM46akgTmLVDtbYeLWkCQxsEBlVpArP2YG1tPVrSBCZi51CtrKOGdB9TZDpcC1JNMNRHYFDlKrCIf95oDU8/h3TPYH2ny+1Hrfe6X8/fa72XJa4m2J5qxtXi/axIGVirw84YmbvAPD1/aPC2f3eBwZeUgbV64M74oO8ysD1uE7UPe4/383Z7FEn+MUXGiVKbywkm4vNq3sLrft0GBh9cB+b1ql7K8z5dBwb73Afm+eou4X1/7gMT8X8IUyLsK0RgIjEOoy/KfsIEBptCBRblqo+yD5FggYn4Pxzv6x8KF5iI30Pyuu45Yf+lcsfDnzqKGFYn5ATrs3541te3VfjAROweotV17Sn8LXLIwi0zQ1iddIF1WoSWKaxO2sA6NULLGFYnfWB9e8aWOao+ApuxJDiCGkdgUJXiYwq0Q2BQRWBQRWBQRWBQRWBQRWBQRWBQRWBQRWBQRWBQdXx9fjq0XgRien1+OjDBoIrAoOoo8jbKWi8EsXRNMcGg6l9gTDHspd/SceoLwBrDhrhFQtVDYEwxrDXWzugEIzIsNdXM5C2SyFBqrpWiiPjVNowpGUJFD/lMMwyVNrE4HKZZbkuHzabJRGw5bLmD/QHGK1cCj4jbkgAAAABJRU5ErkJggg==',sizes:'152x152',type:'image/png'},
-  {src:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAFa0lEQVR4nO3dzVXbQBSG4bFPioB1ykkHZgE9pI70YBbQQcrJ2nRBFqAcRVjWjOb33u991glnJO47I5kTcgiF3T2+vJf+msDk7fnhUPLrZX8xBh495Qax+y8z+BjJ3hCS/xKDj5GlhnBM+cMMP0aXOqNRtTD4sCjmNNg8ARh+WBUzuzcDYPhh3dYMrwbA8MOLW7N8NQCGH96szXTSp0CAN18CYPeHV9dm+7j1BwBPljPOIxCk/QuA3R8q5rPOCQBpxxDY/aFnmnlOAEgjAEgjAEg78PwPZZwAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAnV3Op95LkEYAHU3DTwT9EACkEUAny12fU6APAoA0AuhgbbfnFGiPACCNABrb2uU5BdoiAEgjgIZid3dOgXYIoBGGekwEMCiCaYMAGtg7zERQHwFAGgFUlruLcwrURQCQRgAVldq9OQXqIYBKGFobCMAIgqqDACpgWO0gAEMIqzwCKIwhtYUAjCGwsgigoFbDSQTlEACkEUAhrXdlToEyCKAAhtEuAjCM8PIRQCaG0DYCMI4A8xBABobPPgJwgBD3I4CdGDofCGCHEYd/xDVZQACOEEE6AkjEkPlCAM4QaBoCSMBw+UMADhFqPAKIxFD5RABOEWwcAojAMPlFABssD7/ltbdCADd4GKDL+eTiOmohgBXehsbb9ZRCAFd4HRav15WDABa8D4n360tFADMqw6FynTEI4JPaUKhd7xoCCLrDoHrdc/IBqA+B+vVLB6D+zZ8o3wfZAJS/6deo3g/ZAIAQRANQ3e22KN4XuQAUv8kp1O6PXADAnFQAarvbXkr36VvvBVhw//T6p/caclzOp++91zCqw93jy3vvRbSwZ1ezPvhLqSHcP73WWsowpB6BgCWJANj9P6Rek8K7gEQAwBr3ASjsYjV5v3/uA9jL4ycnHq8pFwFAmuuPQUsd39ZfiEvs/F4/EuUHYRF4dPCLRyBIIwBIIwBIcxuA98+vW/N6P3kJTnT/9Pq79xq2XM6nH73XYAUBRLIw+JNprYSwze0jEBCDACJY2v3nrK67JQKANAKANAKIYPVl0uq6WyIASONj0EjTbmrhxZKdPx4BJGK4fOERCNIIANLcBuD1XzD14vV+ug0AiMFLcKb7p9dfvdcQQgiX8+ln7zVYRAA7jTL4k2k9hJCGRyBIcx1ArRe30Xb/uRpr8/oCHILzAIAtBABp7gOocXyP/KJZem2eH39CEAgAuMX17wadq/VrPUZ5Ia5xKnnf/UPg5wDZRn4cwjaZRyCF3awklfslEwBwjVQAKrtaLqX7JBUAsCQXgNLutofa/ZELIAS9b3IsxfsiGQAwkQ1Acbe7RfV+yAYQgu43fUn5PkgHEIL2Nz8Erl8+gBB0h0D1uucI4JPaMKhd7xoCmFEZCpXrjEEAC96Hw/v1pSKAK7wOidfrykEAK7wNi7frKUXmX4TlsPyfRDP4t3ECRLA6RFbX3RInQCILpwGDH48AdhoxBAY/HQFkGiEEBn8/AiikRwgMfj4CqKBmDAx9WQTQyJ4oGPb6CADS+DkApBEApBEApBEApBEApBEApBEApBEApBEApBEApBEApBEApBEApB3fnh8OvRcB9PD2/HDgBIA0AoA0AoC0Ywgfz0K9FwK0NM08JwCk/QuAUwAq5rPOCQBp/wXAKQDvljP+5QQgAnh1bbZ5BIK0qwFwCsCbtZlePQGIAF7cmuWbj0BEAOu2ZnjzHYAIYFXM7CYNN79IFxakbNpJnwJxGmB0qTO6e6A5DTCSvZtz9o5OCOgp96mk+CMNQaCm0o/hfwFzl68agTHzFwAAAABJRU5ErkJggg==',sizes:'192x192',type:'image/png',purpose:'any maskable'},
+  {src:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAFa0lEQVR4nO3dzVXbQBSG4bFPioB1ykkHZgE9pI70YBbQQcrJ2nRBFqAcRVjWjOb33u991glnJO47I5kTcgiF3T2+vJf+msDk7fnhUPLrZX8xBh495Qax+y8z+BjJ3hCS/xKDj5GlhnBM+cMMP0aXOqNRtTD4sCjmNNg8ARh+WBUzuzcDYPhh3dYMrwbA8MOLW7N8NQCGH96szXTSp0CAN18CYPeHV9dm+7j1BwBPljPOIxCk/QuA3R8q5rPOCQBpxxDY/aFnmnlOAEgjAEgjAEg78PwPZZwAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAkEYAnV3Op95LkEYAHU3DTwT9EACkEUAny12fU6APAoA0AuhgbbfnFGiPACCNABrb2uU5BdoiAEgjgIZid3dOgXYIoBGGekwEMCiCaYMAGtg7zERQHwFAGgFUlruLcwrURQCQRgAVldq9OQXqIYBKGFobCMAIgqqDACpgWO0gAEMIqzwCKIwhtYUAjCGwsgigoFbDSQTlEACkEUAhrXdlToEyCKAAhtEuAjCM8PIRQCaG0DYCMI4A8xBABobPPgJwgBD3I4CdGDofCGCHEYd/xDVZQACOEEE6AkjEkPlCAM4QaBoCSMBw+UMADhFqPAKIxFD5RABOEWwcAojAMPlFABssD7/ltbdCADd4GKDL+eTiOmohgBXehsbb9ZRCAFd4HRav15WDABa8D4n360tFADMqw6FynTEI4JPaUKhd7xoCCLrDoHrdc/IBqA+B+vVLB6D+zZ8o3wfZAJS/6deo3g/ZAIAQRANQ3e22KN4XuQAUv8kp1O6PXADAnFQAarvbXkr36VvvBVhw//T6p/caclzOp++91zCqw93jy3vvRbSwZ1ezPvhLqSHcP73WWsowpB6BgCWJANj9P6Rek8K7gEQAwBr3ASjsYjV5v3/uA9jL4ycnHq8pFwFAmuuPQUsd39ZfiEvs/F4/EuUHYRF4dPCLRyBIIwBIIwBIcxuA98+vW/N6P3kJTnT/9Pq79xq2XM6nH73XYAUBRLIw+JNprYSwze0jEBCDACJY2v3nrK67JQKANAKANAKIYPVl0uq6WyIASONj0EjTbmrhxZKdPx4BJGK4fOERCNIIANLcBuD1XzD14vV+ug0AiMFLcKb7p9dfvdcQQgiX8+ln7zVYRAA7jTL4k2k9hJCGRyBIcx1ArRe30Xb/uRpr8/oCHILzAIAtBABp7gOocXyP/KJZem2eH39CEAgAuMX17wadq/VrPUZ5Ia5xKnnf/UPg5wDZRn4cwjaZRyCF3awklfslEwBwjVQAKrtaLqX7JBUAsCQXgNLutofa/ZELIAS9b3IsxfsiGQAwkQ1Acbe7RfV+yAYQgu43fUn5PkgHEIL2Nz8Erl8+gBB0h0D1uucI4JPaMKhd7xoCmFEZCpXrjEEAC96Hw/v1pSKAK7wOidfrykEAK7wNi7frKUXmX4TlsPyfRDP4t3ECRLA6RFbX3RInQCILpwGDH48AdhoxBAY/HQFkGiEEBn8/AiikRwgMfj4CqKBmDAx9WQTQyJ4oGPb6CADS+DkApBEApBEApBEApBEApBEApBEApBEApBEApBEApBEApBEApBEApB3fnh8OvRcB9PD2/HDgBIA0AoA0AoC0Ywgfz0K9FwK0NM08JwCk/QuAUwAq5rPOCQBp/wXAKQDvljP+5QQgAnh1bbZ5BIK0qwFwCsCbtZlePQGIAF7cmuWbj0BEAOu2ZnjzHYAIYFXM7CYNN79IFxakbNpJnwJxGmB0qTO6e6A5DTCSvZtz9o5OCOgp96mk+CMNQaCm0o/hfwFzl68agTHzFwAAAABJRU5ErkJggg==',sizes:'192x192',type:'image/png',purpose:"any maskable"},
   {src:'data:image/png;base64,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',sizes:'384x384',type:'image/png'},
-  {src:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAQe0lEQVR4nO3dzXkcuRWGUVKPgqDWDmcy4CyoHByHc9AsyAwcjteaLOiFpFGTbLJ/qgBc4DsnALvIQuO+hWoNb28C3D08Po++BgDm8fdff96OvobWlvoBDXoAWlopDKb+QQx8AEaaOQimu3BDH4CKZouBKS7W0AdgJjPEQOkLNPgBmFnlECh3YYY+ACuqFgNlLsbgByBBlRD4NPoCbm4MfwByVJl5Qyukyi8BAEYYeRow5P/Y4AeA30aEQPdXAIY/ALw0YjZ2DQDDHwCO6z0juxw5GPwAcL4erwSanwAY/gBwmR6zs2kAGP4AcJ3WM7RZABj+ALBNy1naJAAMfwDYR6uZuuuXDAx+AGhnzy8H7nYCYPgDQFt7ztoSfwsAAOhrlwDw9A8Afew1czcHgOEPAH3tMXs3BYDhDwBjbJ3BVweA4Q8AY22ZxVcFgOEPADVcO5P9KwAACHRxAHj6B4BarpnNFwWA4Q8ANV06o88OAMMfAGq7ZFb7DgAABDorADz9A8Aczp3ZTgAAINDJAPD0DwBzOWd2fxgAhj8AzOnUDPcKAAACvRsAnv4BYG4fzXInAAAQSAAAQKCjAeD4HwDW8N5MdwIAAIHeBICnfwBYy7HZ7gQAAAIJAAAI9CIAHP8DwJpez3gnAAAQSAAAQKB/AsDxPwCs7XDWOwEAgEACAAACCQAACPTp5sb7fwBI8WvmOwEAgEACAAACCQAACCQAACCQAACAQLf+BQAA5HECAACBBAAABBIAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAQAAgQQAAAQSAAAQSAAAQCABAACBBAAABBIAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAQAAgQQAAAQSAAAQSAAAQCABAACBBAAABBIAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAQAAgQQAAAQSAAAQSAAAQCABAACBBAAABBIAABBIAABAIAEAAIEEAAAEEgAAEEgAAEAgAQDBvn+7H30JwCACAEL9Gv4iADIJAAAIJAAg0OunfqcAkEcAAEAgAQBh3nvadwoAWQQAAAQSABDk1FO+UwDIIQAAIJAAgBDnPt07BYAMAgACXDrURQCsTwAAQCABAIu79mneKQCsTQAAQCABAAvb+hTvFADWJQAAIJAAgEXt9fTuFADWJABgQYY2cIoAAE4SFLAeAQCLaTWsRQCsRQAAQCABAAtp/ZTuFADWIQAAIJAAgEX0ejp3CgBrEAAAEEgAwAJ6P5U7BYD5CQCYnGEMXEMAAFcRHjA3AQATGz2ER///A9cTAAAQSADApKo8fVe5DuAyAgAAAgkAmFC1p+5q1wOcJgBgMoYtsAcBAOxCmMBcBABMxJAF9iIAgN0IFJiHAIBJzDJcZ7lOSCcAACCQAIAJzPZUPdv1QiIBAACBBAAUN+vT9KzXDSkEABRmiAKtCACgGQEDdQkAKMrwBFoSAEBTQgZqEgBQ0GpDc7WfB1YgAAAgkACAYlZ9Wl7154JZCQAoxJAEehEAQDcCB+oQAFCE4Qj0JACAroQO1CAAoABDEehNAADdCR4YTwDAYKnDMPXnhioEAAAEEgAwUPpTcPrPDyMJABjE8ANGEgDAUEIIxhAAMIChB4wmAIDhBBH0JwCgM8MOqEAAACUII+hLAEBHhtzH/H6gHwEAAIEEAHTi6fY8fk/QhwCADgw1oBoBAJQjmKA9AQCNGWZARQIAKEk4QVsCABoyxICqBABQloCCdgQANGJ47cPvEdoQANCAoQVUJwCA8gQV7E8AwM4MK2AGAgCYgrCCfQkA2JEhBcxCAADTEFiwHwEAOzGcgJkIAGAqQgv2IQBgB4ZSX37fsJ0AgI0MI2BGAgCYkvCCbQQAbGAIAbMSAMC0BBhcTwDAlQwfYGYCAJiaEIPrCAC4gqEDzE4AwIUM/3rcE7icAACWIALgMgIALmDIAKsQAMAyBBqcTwDAmQwXYCUCAFiKUIPzCAA4g6ECrEYAAMsRbHCaAIATDBNgRQIAPmD4z8u9g48JAGBZIgDeJwDgHYYHsDIBACxNyMFxAgCOMDSA1QkAYHmCDt4SAPCKYQEkEABwwPBfl3sLLwkAAAgkAOAnT4jrc4/hNwEARBEB8IMAgBtDAcgjAIA4gg8EABgGodx30gkAohkC2dx/kgkAYtn8ubmxDsh1e/fw+Dz6IqAnGz7v+fL1afQlQDdOAIhi+PMR64MkAoAYNnfOYZ2QwisAlmdD51peCbAyJwAszfBnC+uHlQkAlmXzZg/WEasSACzJps2erCdWJABYjs2aFqwrViMAWIpNmpasL1YiAFiGzZkerDNWIQBYgk2Znqw3ViAAmJ7NmBGsO2YnAJiaTZiRrD9mJgCYls2XCqxDZiUAmJJNl0qsR2YkAJiOzZaKrEtmIwCYik2WyqxPZiIAmIbNlRlYp8xCADAFmyozsV6ZgQCgPJspM7JuqU4AAEAgAUBpnqKYmfVLZQKAsmyerMA6pioBQEk2TVZiPVORAACAQAKAcjwtsSLrmmoEAKXYJFmZ9U0lAoAybI4ksM6pQgAAQCABQAmeikhivVOBAGA4myGJrHtGEwAAEEgAMJSnIJJZ/4wkAAAgkABgGE8/4HPAOAKAIWx68JvPAyMIAAAIJADoztMOvOVzQW8CAAAC3d49PD6PvghyVH3K+fL16X+jr4H+vn+7/9foa3jty9en0ZdAiM+jLwBGMfQ5XAMVYwBa8gqAbio9/Rv+vFZlTVT6nLA2AUCcKhs99VgbJBEAdFHlqcYGzykV1kiVzwtrEwDEqLCxMwdrhQQCgOYqPM3Y0LnU6DVT4XPD2gQAAAQSAAAQSADQVIVjzNFHucxr9Nqp8PlhXQIAAAIJAJrx9ALb+RzRigAAgEACAAACCQCacGwJ+/F5ogUBwPL8lTeuZe2wMgEAAIEEALtzXAn787libwKACI5yuZQ1w+oEADFs6JzLWiGBAGBX1Y8pbeycUnmNVP98MRcBQJzKGzxjWRskEQBEstHzmjVBms+jLwBGOdzwR//VN8Yw9El2e/fw+Dz6IliD95PQx5evT6MvgQV4BQAAgQQAAAQSAAAQSACwC+//oR+fN/YgAAAgkAAAgEACAAACCQAACCQA2MwXkqA/nzu2EgAAEEgAAEAgAQAAgQQAAATy54DhAl++Pv139DVw2vdv93+MvgaoTgDACYb+fA7vmRiA47wCgA8Y/vNzD+E4AcAmK/9bZINjHavey5U/f7QnAOCIVQdGMvcUXhIA8IpBsS73Fn4TAHDAgFifeww/CAAACCQAACCQAICfHA3ncK9BAABAJAEAAIEEAAAEEgAAEEgAAEAgAQA/+atxOdxrEAAAEEkAAEAgAQAHHA2vzz2GHwQAvGJArMu9hd8EABxhUKzHPYWXBAC8w8BYh3sJbwkA+IDBMT/3EI77PPoCoLrDAeKvyM3B0IfTbu8eHp9HXwRz+/7tfvQlQKQvX59GXwIT8woAAAIJAAAIJAAAIJAAAIBAAgAAAgkAAAgkAAAgkABgM/8WGfrzuWMrAQAAgQQAAAQSAAAQSAAAQCABwC58IQn68XljD/4cMDTw5evTf0Zfw4q+f7v/9+hrgFUIANiJod/e4e9YDMA2XgHADgz//vzOYRsBwG5S30saROMk/u5TP2fsTwDABokDqBr3AK4jAOBKBk8d7gVcTgDAFQycetwTuIwAYFfeT0I7Pl/sSQAAQCABABdy1FyXewPnEwDszjEl7M/nir0JAAAIJAAAIJAAoAnHlbAfnydaEAAAEEgAwIX8Fbq63Bs4nwCgGceWsJ3PEa0IAAAIJABoatWnF0fN9ax4T1b9/FCDAIArrThwZuVewOUEAGxg8IznHsB1BADNrX6MaQCNs/LvfvXPDeMJANjByoOoKr9z2Ob27uHxefRFkOH7t/vRl9CNv0rXRsrQ9/RPD59HXwCsKGVQAfPyCoBuPNXAaT4n9CIAACCQAKArTzfwPp8PehIAABBIANCdpxx4y+eC3gQAAAQSAAzhaQd+83lgBAHAMDY98DlgHAEAAIEEAEN5+iGZ9c9IAgAAAgkAhvMURCLrntEEACXYDElivVOBAACAQAKAMjwVkcA6pwoBQCk2R1ZmfVOJAKAcmyQrsq6pRgAAQCABQEmelliJ9UxFAoCybJqswDqmKgFAaTZPZmb9UpkAAIBAAoDyPEUxI+uW6gQAU7CZMhPrlRkIAKZhU2UG1imzEABMxeZKZdYnMxEATMcmS0XWJbMRAEzJZksl1iMzEgBMy6ZLBdYhsxIATM3my0jWHzMTAEzPJswI1h2zEwAswWZMT9YbKxAALMOmTA/WGasQACzF5kxL1hcrEQAsxyZNC9YVqxEALMlmzZ6sJ1YkAFiWTZs9WEesSgCwNJs3W1g/rOz27uHxefRFQA/fv92PvgQmYfCTwAkAMWzqnMM6IYUAIIrNnY9YHyTxCoBYXgnwi8FPIicAxLLpc3NjHZBLABDN5p/N/SeZVwDwk1cCOQx+cAIA/zAUMrjP8IMTADjCacB6DH54SQDAB4TA/Ax+OM4rAPiA4TE39w/e5wQAzuQ0YB4GP5wmAOBCQqAugx/OJwDgSkKgDoMfLicAYCMhMI7BD9cTALATIdCPwQ/bCQBoQAzsz9CHfQkAaEgIbGfwQxsCADoRA+cz9KE9AQADiIG3DH3oSwDAYMkxYOjDOAIAilk5CAx8qEMAQHEzB4GBD3UJAJhQxSgw7GEuAgAW1CIQDHhYiwAAgECfRl8AANCfAACAQAIAAAIJAAAIJAAAIJAAAIBAAgAAAgkAAAgkAAAgkAAAgEACAAACCQAACCQAACCQAACAQAIAAAIJAAAIJAAAIJAAAIBAAgAAAgkAAAgkAAAgkAAAgEACAAACCQAACCQAACCQAACAQAIAAAIJAAAIJAAAIJAAAIBAAgAAAgkAAAgkAAAgkAAAgECf/v7rz9vRFwEA9PP3X3/eOgEAgEACAAACCQAACCQAACCQAACAQJ9ubn58G3D0hQAA7f2a+U4AACCQAACAQAIAAAL9EwC+BwAAazuc9U4AACCQAACAQC8CwGsAAFjT6xnvBAAAAgkAAAj0JgC8BgCAtRyb7U4AACDQ0QBwCgAAa3hvpjsBAIBAAgAAAr0bAF4DAMDcPprlTgAAINCHAeAUAADmdGqGnzwBEAEAMJdzZrdXAAAQ6KwAcAoAAHM4d2Y7AQCAQGcHgFMAAKjtkll90QmACACAmi6d0Re/AhABAFDLNbPZdwAAINBVAeAUAABquHYmX30CIAIAYKwts3jTKwARAABjbJ3Bm78DIAIAoK89Zu8uXwIUAQDQx14z178CAIBAuwWAUwAAaGvPWdtkaN89PD63+N8FgEQtHrKbvAJwGgAA+2g1U5t9B0AEAMA2LWdp0y8BigAAuE7rGdr8XwGIAAC4TI/Z2XU4+3IgALyv50Nz1/8OgNMAADiu94zs/h8CEgEA8NKI2Th0GHslAECykQ/FJZ7GhQAASSqchpf4WwAVfhEA0EOVmVfiIg45DQBgRVUG/y+lLuY1MQDAzKoN/UNlL+yQEABgJpUH/y/lL/A1MQBARTMM/UNTXexrYgCAkWYb+oemvfBjBAEALc088F9b5gf5iDAA4BIrDfr3/B9IdGTZ1C3suQAAAABJRU5ErkJggg==',sizes:'512x512',type:'image/png',purpose:'any maskable'}
+  {src:'data:image/png;base64,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',sizes:'512x512',type:'image/png',purpose:"any maskable"},
 ]};
 const mb=new Blob([JSON.stringify(MF)],{type:'application/json'});
 const ml=document.createElement('link');ml.rel='manifest';ml.href=URL.createObjectURL(mb);document.head.appendChild(ml);
-let deferredPrompt=null;
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;});
 
 // ── 날짜 ──
 const today=new Date();
 const todayStr=today.toISOString().split('T')[0];
-document.getElementById('today-date').textContent=today.toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
-document.getElementById('input-date').value=todayStr;
-
-// 기준일: 데이터가 있으면 가장 최근 작업일, 없으면 오늘
-function getRefDate(){
-  if(!state.logs||state.logs.length===0) return todayStr;
-  return state.logs.map(l=>l.date).sort().slice(-1)[0];
-}
+const todayFmt=today.toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
+document.getElementById('site-today').textContent=todayFmt;
+document.getElementById('today-date').textContent=todayFmt;
 
 const COLORS=[
   {bg:'#E6F1FB',color:'#0C447C'},
@@ -297,12 +324,27 @@ const COLORS=[
   {bg:'#FAEEDA',color:'#854F0B'},
   {bg:'#FAECE7',color:'#993C1D'}
 ];
+const SITE_COLORS=['#185FA5','#2E7D32','#6A1B9A','#B71C1C','#E65100','#00695C'];
+const SITE_EMOJIS=['🏗️','🌊','🏢','🏭','🏘️','⚙️'];
 
-// ── 상태 ──
-let state=(()=>{
-  try{const s=localStorage.getItem('meterapp2');if(s)return JSON.parse(s);}catch(e){}
+// ── 전역 상태 ──
+let currentSiteId = null;  // 현재 선택된 현장 ID
+let state = null;           // 현재 현장 데이터
+
+// ── 현장 목록 관리 ──
+function getSiteList(){
+  try{const s=localStorage.getItem('meter_sites');return s?JSON.parse(s):[];}catch(e){return[];}
+}
+function saveSiteList(list){
+  try{localStorage.setItem('meter_sites',JSON.stringify(list));}catch(e){}
+}
+function getSiteData(id){
+  try{
+    const s=localStorage.getItem('meter_site_'+id);
+    if(s) return JSON.parse(s);
+  }catch(e){}
   return {
-    workers:['김철수','이영희','박민준','최수진','정우성'],
+    workers:[],
     sizes:[
       {id:'s1',name:'13mm',price:14000},
       {id:'s2',name:'20~32mm',price:14000},
@@ -311,16 +353,304 @@ let state=(()=>{
     ],
     logs:[]
   };
-})();
+}
+function saveSiteData(){
+  try{localStorage.setItem('meter_site_'+currentSiteId,JSON.stringify(state));}catch(e){}
+}
 
-function save(){try{localStorage.setItem('meterapp2',JSON.stringify(state));}catch(e){}}
-// log 구조: {id, date, worker, qtys:{s1:0,s2:0,s3:0,s4:0}}
+// ── 현장 선택 화면 ──
+let curSumMonth = '';  // 전체합산 선택 월
+
+function switchMainTab(tab, btn){
+  document.querySelectorAll('.main-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('view-sites').classList.toggle('active', tab==='sites');
+  document.getElementById('view-summary').classList.toggle('active', tab==='summary');
+  if(tab==='summary') renderSummary();
+}
+
+function getAllMonths(){
+  const sites = getSiteList();
+  const months = new Set();
+  sites.forEach(s=>{
+    const data = getSiteData(s.id);
+    data.logs.forEach(l=>months.add(l.date.slice(0,7)));
+  });
+  return Array.from(months).sort((a,b)=>b.localeCompare(a));
+}
+
+function renderSummary(){
+  const sites = getSiteList();
+  if(!sites.length){
+    document.getElementById('summary-content').innerHTML='<div class="empty"><span>🏗️</span>현장을 먼저 추가해주세요</div>';
+    return;
+  }
+
+  // 월 목록 버튼 생성
+  const months = getAllMonths();
+  if(!months.length){
+    document.getElementById('sum-month-bar').innerHTML='';
+    document.getElementById('summary-content').innerHTML='<div class="empty"><span>📋</span>작업 내역이 없습니다</div>';
+    return;
+  }
+  if(!curSumMonth || !months.includes(curSumMonth)) curSumMonth = months[0];
+
+  document.getElementById('sum-month-bar').innerHTML =
+    ['전체',...months].map(m=>`<button class="sum-pbtn${(m==='전체'?curSumMonth==='all':curSumMonth===m)?' active':''}" onclick="setSumMonth('${m}',this)">${m==='전체'?'전체':m.replace('-','년 ')+'월'}</button>`).join('');
+
+  buildSummaryContent(sites);
+}
+
+function setSumMonth(m, btn){
+  curSumMonth = m==='전체' ? 'all' : m;
+  document.querySelectorAll('.sum-pbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  buildSummaryContent(getSiteList());
+}
+
+function buildSummaryContent(sites){
+  // 모든 현장의 로그를 월 필터 적용해서 수집
+  const allSiteData = sites.map((s,si)=>({
+    site: s,
+    color: SITE_COLORS[si%SITE_COLORS.length],
+    data: getSiteData(s.id)
+  }));
+
+  // 필터된 로그
+  const filtered = allSiteData.map(sd=>({
+    ...sd,
+    logs: sd.data.logs.filter(l=> curSumMonth==='all' || l.date.startsWith(curSumMonth))
+  }));
+
+  // 전체 합계
+  const grandTotal = filtered.reduce((s,sd)=>
+    s + sd.logs.reduce((a,l)=>a+logTotalForData(l,sd.data),0), 0);
+  const grandQty = filtered.reduce((s,sd)=>
+    s + sd.logs.reduce((a,l)=>a+sd.data.sizes.reduce((q,sz)=>q+(l.qtys[sz.id]||0),0),0), 0);
+
+  const monthLabel = curSumMonth==='all' ? '전체' :
+    curSumMonth.replace(/(\d+)-(\d+)/, '$1년 $2월');
+
+  let html = `<div class="sum-total-card">
+    <div class="sum-total-label">${monthLabel} 전체 현장 합산</div>
+    <div class="sum-total-val">${grandTotal.toLocaleString()}원</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.75);margin-top:4px;">총 ${grandQty.toLocaleString()}개</div>
+  </div>`;
+
+  // ── 작업자별 합산 ──
+  // 모든 작업자 이름 수집
+  const allWorkers = [...new Set(filtered.flatMap(sd=>sd.data.workers))];
+
+  html += `<div class="sum-section">👷 작업자별 합산</div>`;
+
+  if(!allWorkers.length){
+    html += '<div class="empty" style="padding:20px;"><span>👷</span>작업자가 없습니다</div>';
+  } else {
+    allWorkers.forEach(worker=>{
+      // 작업자의 현장별 수량·금액 수집
+      let workerTotal = 0, workerQty = 0;
+      const siteBreakdown = [];
+
+      filtered.forEach(sd=>{
+        const wLogs = sd.logs.filter(l=>l.worker===worker);
+        if(!wLogs.length) return;
+        const amt = wLogs.reduce((s,l)=>s+logTotalForData(l,sd.data),0);
+        const qty = wLogs.reduce((s,l)=>s+sd.data.sizes.reduce((q,sz)=>q+(l.qtys[sz.id]||0),0),0);
+        const szBreakdown = sd.data.sizes.map(sz=>{
+          const q = wLogs.reduce((s,l)=>s+(l.qtys[sz.id]||0),0);
+          return q ? `${sz.name} ${q}개` : '';
+        }).filter(Boolean).join(' / ');
+        workerTotal += amt;
+        workerQty += qty;
+        siteBreakdown.push({name:sd.site.name, color:sd.color, qty, amt, szBreakdown});
+      });
+
+      if(!workerTotal) return;
+
+      const uid = 'w_'+worker.replace(/\s/g,'');
+      html += `<div class="sum-card">
+        <div class="sum-card-header" onclick="toggleSumCard('${uid}')">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="avatar" style="width:36px;height:36px;font-size:13px;">${worker.slice(0,2)}</div>
+            <div>
+              <div style="font-size:15px;font-weight:700;">${worker}</div>
+              <div style="font-size:12px;color:#aaa;">총 ${workerQty}개</div>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:16px;font-weight:800;color:#185FA5;">${workerTotal.toLocaleString()}원</div>
+            <div style="font-size:11px;color:#bbb;">▾ 현장별 보기</div>
+          </div>
+        </div>
+        <div class="sum-card-body" id="${uid}">
+          ${siteBreakdown.map(sb=>`
+            <div class="sum-worker-row">
+              <div>
+                <div><span class="sum-site-tag" style="background:${sb.color}18;color:${sb.color};">${sb.name}</span></div>
+                <div style="font-size:12px;color:#888;margin-top:2px;">${sb.szBreakdown}</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:14px;font-weight:700;color:#185FA5;">${sb.amt.toLocaleString()}원</div>
+                <div style="font-size:12px;color:#aaa;">${sb.qty}개</div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+    });
+  }
+
+  // ── 현장별 합산 ──
+  html += `<div class="sum-section">🏗️ 현장별 합산</div>`;
+  filtered.forEach((sd,i)=>{
+    if(!sd.logs.length){ return; }
+    const siteTotal = sd.logs.reduce((s,l)=>s+logTotalForData(l,sd.data),0);
+    const siteQty = sd.logs.reduce((s,l)=>s+sd.data.sizes.reduce((q,sz)=>q+(l.qtys[sz.id]||0),0),0);
+    const uid = 'site_sum_'+i;
+
+    // 현장 내 작업자별
+    const wRows = sd.data.workers.map(w=>{
+      const wl = sd.logs.filter(l=>l.worker===w);
+      if(!wl.length) return '';
+      const amt = wl.reduce((s,l)=>s+logTotalForData(l,sd.data),0);
+      const qty = wl.reduce((s,l)=>s+sd.data.sizes.reduce((q,sz)=>q+(l.qtys[sz.id]||0),0),0);
+      const szB = sd.data.sizes.map(sz=>{
+        const q=wl.reduce((s,l)=>s+(l.qtys[sz.id]||0),0);
+        return q?`${sz.name} ${q}개`:'';
+      }).filter(Boolean).join(' / ');
+      return `<div class="sum-worker-row">
+        <div>
+          <div style="font-size:14px;font-weight:600;">${w}</div>
+          <div style="font-size:12px;color:#888;margin-top:2px;">${szB}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:14px;font-weight:700;color:#185FA5;">${amt.toLocaleString()}원</div>
+          <div style="font-size:12px;color:#aaa;">${qty}개</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    html += `<div class="sum-card">
+      <div class="sum-card-header" onclick="toggleSumCard('${uid}')">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:36px;height:36px;border-radius:10px;background:${sd.color}18;display:flex;align-items:center;justify-content:center;font-size:18px;">🏗️</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:${sd.color};">${sd.site.name}</div>
+            <div style="font-size:12px;color:#aaa;">총 ${siteQty}개</div>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:16px;font-weight:800;color:#185FA5;">${siteTotal.toLocaleString()}원</div>
+          <div style="font-size:11px;color:#bbb;">▾ 작업자별 보기</div>
+        </div>
+      </div>
+      <div class="sum-card-body" id="${uid}">${wRows||'<div style="padding:10px 0;font-size:13px;color:#bbb;">작업 없음</div>'}</div>
+    </div>`;
+  });
+
+  document.getElementById('summary-content').innerHTML = html;
+}
+
+function toggleSumCard(uid){
+  const el = document.getElementById(uid);
+  if(el) el.classList.toggle('open');
+}
+  const sites=getSiteList();
+  const el=document.getElementById('site-list');
+  if(!sites.length){
+    el.innerHTML=`<div class="empty"><span>🏗️</span>아직 현장이 없습니다<br>아래 버튼으로 추가하세요</div>`;
+    return;
+  }
+  el.innerHTML=sites.map((s,i)=>{
+    const color=SITE_COLORS[i%SITE_COLORS.length];
+    const emoji=SITE_EMOJIS[i%SITE_EMOJIS.length];
+    const data=getSiteData(s.id);
+    const totalLogs=data.logs.length;
+    const totalAmt=data.logs.reduce((sum,l)=>sum+logTotalForData(l,data),0);
+    return `<div class="site-card" onclick="enterSite('${s.id}')">
+      <div class="site-card-left">
+        <div class="site-icon" style="background:${color}20;">${emoji}</div>
+        <div>
+          <div class="site-name" style="color:${color};">${s.name}</div>
+          <div class="site-sub">작업 ${totalLogs}건 · ${totalAmt.toLocaleString()}원</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button onclick="event.stopPropagation();deleteSite('${s.id}')" class="site-del-btn">🗑</button>
+        <span class="site-arrow">›</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+function logTotalForData(log,data){
+  return data.sizes.reduce((s,sz)=>s+(log.qtys[sz.id]||0)*sz.price,0);
+}
+
+function openAddSite(){
+  document.getElementById('modal-title').textContent='새 현장 추가';
+  document.getElementById('modal-body').innerHTML=`
+    <div class="frow"><label>현장명</label><input type="text" id="new-site-name" placeholder="예: ○○ 아파트 현장" autofocus></div>
+    <button class="btn btn-p" onclick="addSite()">✅ 현장 추가</button>
+  `;
+  document.getElementById('modal-overlay').style.display='flex';
+  setTimeout(()=>document.getElementById('new-site-name').focus(),100);
+}
+function addSite(){
+  const name=document.getElementById('new-site-name').value.trim();
+  if(!name){alert('현장명을 입력해주세요.');return;}
+  const sites=getSiteList();
+  const id='site_'+Date.now();
+  sites.push({id,name});
+  saveSiteList(sites);
+  closeModal();
+  renderSiteList();
+}
+function deleteSite(id){
+  const sites=getSiteList();
+  const s=sites.find(x=>x.id===id);
+  if(!s||!confirm(`"${s.name}" 현장을 삭제하시겠습니까?
+모든 작업 데이터가 삭제됩니다.`))return;
+  saveSiteList(sites.filter(x=>x.id!==id));
+  try{localStorage.removeItem('meter_site_'+id);}catch(e){}
+  renderSiteList();
+}
+
+function enterSite(id){
+  currentSiteId=id;
+  state=getSiteData(id);
+  const sites=getSiteList();
+  const s=sites.find(x=>x.id===id);
+  document.getElementById('app-site-name').textContent=s?s.name:'현장';
+  document.getElementById('settings-site-name').value=s?s.name:'';
+  document.getElementById('site-screen').style.display='none';
+  document.getElementById('app-screen').classList.add('active');
+  document.getElementById('input-date').value=todayStr;
+  showPage('home');
+}
+function goSiteSelect(){
+  currentSiteId=null; state=null;
+  document.getElementById('app-screen').classList.remove('active');
+  document.getElementById('site-screen').style.display='flex';
+  renderSiteList();
+}
+function saveSiteName(){
+  const name=document.getElementById('settings-site-name').value.trim();
+  if(!name){alert('현장명을 입력해주세요.');return;}
+  const sites=getSiteList();
+  const s=sites.find(x=>x.id===currentSiteId);
+  if(s){s.name=name;saveSiteList(sites);}
+  document.getElementById('app-site-name').textContent=name;
+  alert('✅ 현장명이 저장되었습니다.');
+}
+
+// ── 유틸 ──
+function save(){saveSiteData();}
 function logTotal(log){return state.sizes.reduce((s,sz)=>s+(log.qtys[sz.id]||0)*sz.price,0);}
 function logQtyTotal(log){return state.sizes.reduce((s,sz)=>s+(log.qtys[sz.id]||0),0);}
 function szColor(i){return COLORS[i%4];}
-function fmtDate(d){
-  const dt=new Date(d+'T00:00:00');
-  return dt.toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'short'});
+function fmtDate(d){const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'short'});}
+function getRefDate(){
+  if(!state.logs||!state.logs.length)return todayStr;
+  return state.logs.map(l=>l.date).sort().slice(-1)[0];
 }
 function getMonday(dateStr){
   const d=new Date(dateStr+'T00:00:00');
@@ -332,10 +662,7 @@ function getMonday(dateStr){
 function filterByPeriod(logs,period){
   const ref=getRefDate();
   if(period==='today') return logs.filter(l=>l.date===todayStr);
-  if(period==='week'){
-    const monStr=getMonday(ref);
-    return logs.filter(l=>l.date>=monStr&&l.date<=ref);
-  }
+  if(period==='week'){const mon=getMonday(ref);return logs.filter(l=>l.date>=mon&&l.date<=ref);}
   if(period==='month') return logs.filter(l=>l.date.startsWith(ref.slice(0,7))&&l.date<=ref);
   return logs;
 }
@@ -347,19 +674,18 @@ function showPage(name){
   document.getElementById('page-'+name).classList.add('active');
   ['home','input','logs','pay','settings'].forEach((n,i)=>{if(n===name)document.querySelectorAll('.tab')[i].classList.add('active');});
   if(name==='home')renderHome();
-  if(name==='input')initInput();
+  if(name==='input'){initInput();}
   if(name==='logs'){renderDateLogs(curLogFilter);updateWorkerLogSelect();}
   if(name==='pay')renderPay(curPayFilter);
   if(name==='settings')renderSettings();
 }
 
-// ══ 홈 ══
+// ── 홈 ──
 let curHomeDayFilter='month';
 function filterHomeDays(p,btn){
   curHomeDayFilter=p;
   document.querySelectorAll('#page-home .pbtn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderHomeDays();
+  btn.classList.add('active');renderHomeDays();
 }
 function renderHome(){
   const ref=getRefDate();
@@ -377,66 +703,47 @@ function renderHome(){
   document.getElementById('m-month').textContent=ml.reduce((s,l)=>s+logQtyTotal(l),0).toLocaleString()+'개';
   document.getElementById('m-pay').textContent=ml.reduce((s,l)=>s+logTotal(l),0).toLocaleString()+'원';
   document.getElementById('m-total').textContent=state.logs.length.toLocaleString()+'건';
-
-  // 작업자별
-  document.getElementById('home-workers').innerHTML=state.workers.length===0
-    ?'<div class="empty"><span>👷</span>작업자를 등록해주세요</div>'
+  document.getElementById('home-workers').innerHTML=!state.workers.length
+    ?'<div class="empty" style="padding:16px;"><span>👷</span>작업자를 등록해주세요</div>'
     :state.workers.map(w=>{
       const wl=ml.filter(l=>l.worker===w);
       const qty=wl.reduce((s,l)=>s+logQtyTotal(l),0);
       const amt=wl.reduce((s,l)=>s+logTotal(l),0);
       return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f3f3f3;">
-        <div style="display:flex;align-items:center;">
-          <div class="avatar">${w.slice(0,2)}</div>
-          <div><div style="font-size:15px;font-weight:700;">${w}</div><div style="font-size:12px;color:#aaa;">${monthLabel} ${qty}개</div></div>
-        </div>
+        <div style="display:flex;align-items:center;"><div class="avatar">${w.slice(0,2)}</div>
+        <div><div style="font-size:15px;font-weight:700;">${w}</div><div style="font-size:12px;color:#aaa;">${monthLabel} ${qty}개</div></div></div>
         <div style="text-align:right;"><div style="font-size:15px;font-weight:800;color:#185FA5;">${amt.toLocaleString()}원</div><div style="font-size:11px;color:#bbb;">지급 예정</div></div>
       </div>`;
-    }).join('').replace(/border-bottom[^"]+(?="[^"]*<\/div>\s*$)/,'border-bottom:none');
-
+    }).join('');
   renderHomeDays();
 }
 function renderHomeDays(){
   const logs=filterByPeriod([...state.logs],curHomeDayFilter);
   const el=document.getElementById('home-days');
   if(!logs.length){el.innerHTML='<div class="empty"><span>📅</span>작업 내역이 없습니다</div>';return;}
-  // 날짜별 그룹
   const groups={};
   logs.forEach(l=>{if(!groups[l.date])groups[l.date]=[];groups[l.date].push(l);});
   const dates=Object.keys(groups).sort((a,b)=>b.localeCompare(a));
   el.innerHTML=dates.map(date=>{
-    const dayLogs=groups[date];
-    const dayQty=dayLogs.reduce((s,l)=>s+logQtyTotal(l),0);
-    const dayAmt=dayLogs.reduce((s,l)=>s+logTotal(l),0);
-    const detail=dayLogs.map(l=>{
-      const badges=state.sizes.map((sz,i)=>{
-        const q=l.qtys[sz.id]||0; if(!q)return '';
-        const c=szColor(i);
-        return `<span class="badge" style="background:${c.bg};color:${c.color};">${sz.name} ${q}개</span>`;
-      }).join('');
+    const dl=groups[date];
+    const dAmt=dl.reduce((s,l)=>s+logTotal(l),0);
+    const dQty=dl.reduce((s,l)=>s+logQtyTotal(l),0);
+    const detail=dl.map(l=>{
+      const badges=state.sizes.map((sz,i)=>{const q=l.qtys[sz.id]||0;if(!q)return '';const c=szColor(i);return `<span class="badge" style="background:${c.bg};color:${c.color};">${sz.name} ${q}개</span>`;  }).join('');
       return `<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f8f8f8;">
-        <div>
-          <div style="font-size:14px;font-weight:600;">${l.worker}</div>
-          <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;">${badges}</div>
-        </div>
+        <div><div style="font-size:14px;font-weight:600;">${l.worker}</div><div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;">${badges}</div></div>
         <div style="font-size:14px;font-weight:700;color:#185FA5;white-space:nowrap;padding-left:8px;">${logTotal(l).toLocaleString()}원</div>
       </div>`;
     }).join('');
     return `<div class="day-card" onclick="toggleDayDetail(this)">
-      <div class="day-header">
-        <div class="day-date">${fmtDate(date)}</div>
-        <div style="text-align:right;">
-          <div class="day-total">${dayAmt.toLocaleString()}원</div>
-          <div style="font-size:11px;color:#aaa;">${dayLogs.length}명 ${dayQty}개</div>
-        </div>
-      </div>
+      <div class="day-header"><div class="day-date">${fmtDate(date)}</div><div style="text-align:right;"><div class="day-total">${dAmt.toLocaleString()}원</div><div style="font-size:11px;color:#aaa;">${dl.length}명 ${dQty}개</div></div></div>
       <div class="day-detail">${detail}</div>
     </div>`;
   }).join('');
 }
 function toggleDayDetail(el){el.querySelector('.day-detail').classList.toggle('open');}
 
-// ══ 입력 ══
+// ── 입력 ──
 function initInput(){
   document.getElementById('input-worker').innerHTML='<option value="">— 선택 —</option>'+state.workers.map(w=>`<option value="${w}">${w}</option>`).join('');
   buildSzGrid();
@@ -455,36 +762,16 @@ function buildSzGrid(){
   }).join('');
   updatePreview();
 }
-function adjQty(id,delta){
-  const inp=document.getElementById('qty-'+id);
-  const v=Math.max(0,(parseInt(inp.value)||0)+delta);
-  inp.value=v;
-  onQtyChange(id);
-}
-function onQtyChange(id){
-  const v=parseInt(document.getElementById('qty-'+id).value)||0;
-  const card=document.getElementById('szc-'+id);
-  if(v>0)card.classList.add('has-qty'); else card.classList.remove('has-qty');
-  updatePreview();
-}
-function getQtys(){
-  const q={};
-  state.sizes.forEach(sz=>{q[sz.id]=parseInt(document.getElementById('qty-'+sz.id).value)||0;});
-  return q;
-}
+function adjQty(id,delta){const inp=document.getElementById('qty-'+id);inp.value=Math.max(0,(parseInt(inp.value)||0)+delta);onQtyChange(id);}
+function onQtyChange(id){const v=parseInt(document.getElementById('qty-'+id).value)||0;document.getElementById('szc-'+id).classList.toggle('has-qty',v>0);updatePreview();}
+function getQtys(){const q={};state.sizes.forEach(sz=>{q[sz.id]=parseInt(document.getElementById('qty-'+sz.id).value)||0;});return q;}
 function updatePreview(){
   const qtys=getQtys();
-  const rows=state.sizes.map((sz,i)=>{
-    const q=qtys[sz.id]; if(!q)return '';
-    const c=szColor(i);
-    return `<div class="preview-row"><span><span class="badge" style="background:${c.bg};color:${c.color};">${sz.name}</span> × ${q}개</span><span>${(sz.price*q).toLocaleString()}원</span></div>`;
-  }).filter(Boolean);
+  const rows=state.sizes.map((sz,i)=>{const q=qtys[sz.id];if(!q)return '';const c=szColor(i);return `<div class="preview-row"><span><span class="badge" style="background:${c.bg};color:${c.color};">${sz.name}</span> × ${q}개</span><span>${(sz.price*q).toLocaleString()}원</span></div>`;  }).filter(Boolean);
   const total=state.sizes.reduce((s,sz)=>s+(qtys[sz.id]||0)*sz.price,0);
   const box=document.getElementById('preview-box');
-  if(rows.length){
-    document.getElementById('preview-rows').innerHTML=rows.join('')+`<div class="preview-row total"><span>합계</span><span>${total.toLocaleString()}원</span></div>`;
-    box.style.display='block';
-  } else {box.style.display='none';}
+  if(rows.length){document.getElementById('preview-rows').innerHTML=rows.join('')+`<div class="preview-row total"><span>합계</span><span>${total.toLocaleString()}원</span></div>`;box.style.display='block';}
+  else box.style.display='none';
 }
 function addLog(){
   const date=document.getElementById('input-date').value;
@@ -492,206 +779,110 @@ function addLog(){
   const qtys=getQtys();
   const totalQty=Object.values(qtys).reduce((s,v)=>s+v,0);
   if(!date||!worker){alert('날짜와 작업자를 선택해주세요.');return;}
-  if(totalQty===0){alert('수량을 1개 이상 입력해주세요.');return;}
-  // 같은 날짜+작업자 기존 로그 있으면 합산 여부 확인
+  if(!totalQty){alert('수량을 1개 이상 입력해주세요.');return;}
   const existing=state.logs.find(l=>l.date===date&&l.worker===worker);
-  if(existing){
-    if(!confirm(`${worker}의 ${date} 내역이 이미 있습니다.\n수량을 추가하시겠습니까?`))return;
-    state.sizes.forEach(sz=>{existing.qtys[sz.id]=(existing.qtys[sz.id]||0)+(qtys[sz.id]||0);});
-  } else {
-    state.logs.push({id:Date.now(),date,worker,qtys});
-  }
+  if(existing){if(!confirm(`${worker}의 ${date} 내역이 이미 있습니다.\n수량을 추가하시겠습니까?`))return;state.sizes.forEach(sz=>{existing.qtys[sz.id]=(existing.qtys[sz.id]||0)+(qtys[sz.id]||0);});}
+  else state.logs.push({id:Date.now(),date,worker,qtys});
   save();
-  // 초기화
   state.sizes.forEach(sz=>{document.getElementById('qty-'+sz.id).value=0;document.getElementById('szc-'+sz.id).classList.remove('has-qty');});
   document.getElementById('preview-box').style.display='none';
   const total=state.sizes.reduce((s,sz)=>s+(qtys[sz.id]||0)*sz.price,0);
   alert(`✅ 등록 완료!\n${worker} / 총 ${totalQty}개\n${total.toLocaleString()}원`);
 }
 
-// ══ 내역 ══
-let curLogFilter='all', curWorkerLogFilter='all', curLogView='date';
+// ── 내역 ──
+let curLogFilter='all',curWorkerLogFilter='all',curLogView='date';
 function switchLogView(v,btn){
   curLogView=v;
-  document.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+  document.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
   document.getElementById('logs-date-view').style.display=v==='date'?'block':'none';
   document.getElementById('logs-worker-view').style.display=v==='worker'?'block':'none';
   if(v==='worker'){updateWorkerLogSelect();renderWorkerLogs();}
 }
-function filterLogs(p,btn){
-  curLogFilter=p;
-  document.querySelectorAll('#logs-date-view .pbtn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderDateLogs(p);
-}
+function filterLogs(p,btn){curLogFilter=p;document.querySelectorAll('#logs-date-view .pbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderDateLogs(p);}
 function renderDateLogs(period){
   const logs=filterByPeriod([...state.logs],period).sort((a,b)=>b.date.localeCompare(a.date));
   const el=document.getElementById('log-list');
   if(!logs.length){el.innerHTML='<div class="empty"><span>📋</span>작업 내역이 없습니다</div>';return;}
-  // 날짜별 그룹
-  const groups={};
-  logs.forEach(l=>{if(!groups[l.date])groups[l.date]=[];groups[l.date].push(l);});
+  const groups={};logs.forEach(l=>{if(!groups[l.date])groups[l.date]=[];groups[l.date].push(l);});
   const dates=Object.keys(groups).sort((a,b)=>b.localeCompare(a));
   el.innerHTML=dates.map(date=>{
-    const dayLogs=groups[date];
-    const dayAmt=dayLogs.reduce((s,l)=>s+logTotal(l),0);
-    const dayQty=dayLogs.reduce((s,l)=>s+logQtyTotal(l),0);
-    const cards=dayLogs.map(l=>{
-      const badges=state.sizes.map((sz,i)=>{
-        const q=l.qtys[sz.id]||0;if(!q)return '';
-        const c=szColor(i);
-        return `<span class="badge" style="background:${c.bg};color:${c.color};">${sz.name} ${q}개</span>`;
-      }).join('');
-      return `<div class="log-card">
-        <div class="lc-top">
-          <div class="lc-worker">${l.worker}</div>
-          <div class="lc-amount">${logTotal(l).toLocaleString()}원</div>
-        </div>
-        <div class="lc-badges">${badges}</div>
-        <div class="lc-actions">
-          <button class="btn btn-o btn-sm" onclick="openEditModal(${l.id})">✏️ 수정</button>
-          <button class="btn btn-r btn-sm" onclick="deleteLog(${l.id})">🗑 삭제</button>
-        </div>
-      </div>`;
-    }).join('');
-    return `<div class="date-group">
-      <div class="date-header"><b>${fmtDate(date)}</b><span>총 ${dayQty}개 · ${dayAmt.toLocaleString()}원</span></div>
-      ${cards}
-    </div>`;
+    const dl=groups[date];
+    const dAmt=dl.reduce((s,l)=>s+logTotal(l),0);
+    const dQty=dl.reduce((s,l)=>s+logQtyTotal(l),0);
+    return `<div class="date-group"><div class="date-header"><b>${fmtDate(date)}</b><span>총 ${dQty}개 · ${dAmt.toLocaleString()}원</span></div>`+
+      dl.map(l=>{
+        const badges=state.sizes.map((sz,i)=>{const q=l.qtys[sz.id]||0;if(!q)return '';const c=szColor(i);return `<span class="badge" style="background:${c.bg};color:${c.color};">${sz.name} ${q}개</span>`;  }).join('');
+        return `<div class="log-card"><div class="lc-top"><div class="lc-worker">${l.worker}</div><div class="lc-amount">${logTotal(l).toLocaleString()}원</div></div>
+          <div class="lc-badges">${badges}</div>
+          <div class="lc-actions"><button class="btn btn-o btn-sm" onclick="openEditModal(${l.id})">✏️ 수정</button><button class="btn btn-r btn-sm" onclick="deleteLog(${l.id})">🗑 삭제</button></div></div>`;
+      }).join('')+'</div>';
   }).join('');
 }
-function deleteLog(id){
-  if(!confirm('이 내역을 삭제하시겠습니까?'))return;
-  state.logs=state.logs.filter(l=>l.id!==id);
-  save();renderDateLogs(curLogFilter);renderHome();
-}
-
-// 작업자별
+function deleteLog(id){if(!confirm('이 내역을 삭제하시겠습니까?'))return;state.logs=state.logs.filter(l=>l.id!==id);save();renderDateLogs(curLogFilter);renderHome();}
 function updateWorkerLogSelect(){
-  const sel=document.getElementById('log-worker-select');
-  const cur=sel.value;
+  const sel=document.getElementById('log-worker-select');const cur=sel.value;
   sel.innerHTML='<option value="">— 작업자 선택 —</option>'+state.workers.map(w=>`<option value="${w}"${w===cur?' selected':''}>${w}</option>`).join('');
 }
-function filterWorkerLogs(p,btn){
-  curWorkerLogFilter=p;
-  document.querySelectorAll('#logs-worker-view .pbtn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderWorkerLogs();
-}
+function filterWorkerLogs(p,btn){curWorkerLogFilter=p;document.querySelectorAll('#logs-worker-view .pbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderWorkerLogs();}
 function renderWorkerLogs(){
   const worker=document.getElementById('log-worker-select').value;
   const el=document.getElementById('worker-log-list');
   if(!worker){el.innerHTML='<div class="empty"><span>👷</span>작업자를 선택해주세요</div>';return;}
   const logs=filterByPeriod(state.logs.filter(l=>l.worker===worker),curWorkerLogFilter).sort((a,b)=>b.date.localeCompare(a.date));
   if(!logs.length){el.innerHTML='<div class="empty"><span>📋</span>해당 기간 내역이 없습니다</div>';return;}
-  const totalQty=logs.reduce((s,l)=>s+logQtyTotal(l),0);
-  const totalAmt=logs.reduce((s,l)=>s+logTotal(l),0);
+  const tQty=logs.reduce((s,l)=>s+logQtyTotal(l),0);
+  const tAmt=logs.reduce((s,l)=>s+logTotal(l),0);
   let html=`<div class="card" style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
-    <div><div style="font-size:13px;color:#999;">총 교체 수량</div><div style="font-size:20px;font-weight:800;">${totalQty}개</div></div>
-    <div style="text-align:right;"><div style="font-size:13px;color:#999;">지급 예정</div><div style="font-size:20px;font-weight:800;color:#185FA5;">${totalAmt.toLocaleString()}원</div></div>
+    <div><div style="font-size:13px;color:#999;">총 교체 수량</div><div style="font-size:20px;font-weight:800;">${tQty}개</div></div>
+    <div style="text-align:right;"><div style="font-size:13px;color:#999;">지급 예정</div><div style="font-size:20px;font-weight:800;color:#185FA5;">${tAmt.toLocaleString()}원</div></div>
   </div>`;
   logs.forEach(l=>{
-    const rows=state.sizes.map((sz,i)=>{
-      const q=l.qtys[sz.id]||0;if(!q)return '';
-      const c=szColor(i);
-      const amt=q*sz.price;
-      return `<div class="wlog-row">
-        <span class="badge" style="background:${c.bg};color:${c.color};">${sz.name}</span>
-        <span style="color:#555;">${q}개 × ${sz.price.toLocaleString()}원</span>
-        <span style="font-weight:700;color:#185FA5;">${amt.toLocaleString()}원</span>
-      </div>`;
-    }).filter(Boolean).join('');
-    html+=`<div class="wlog-card">
-      <div class="wlog-top" style="justify-content:space-between;">
-        <div style="font-size:14px;font-weight:700;color:#555;">${fmtDate(l.date)}</div>
-        <div style="display:flex;gap:6px;">
-          <button class="btn btn-o btn-sm" onclick="openEditModal(${l.id})">✏️ 수정</button>
-          <button class="btn btn-r btn-sm" onclick="deleteLog2(${l.id})">🗑</button>
-        </div>
-      </div>
-      <div class="wlog-rows">${rows}</div>
-      <div style="text-align:right;font-size:15px;font-weight:800;color:#185FA5;margin-top:8px;">${logTotal(l).toLocaleString()}원</div>
-    </div>`;
+    const rows=state.sizes.map((sz,i)=>{const q=l.qtys[sz.id]||0;if(!q)return '';const c=szColor(i);return `<div class="wlog-row"><span class="badge" style="background:${c.bg};color:${c.color};">${sz.name}</span><span style="color:#555;">${q}개 × ${sz.price.toLocaleString()}원</span><span style="font-weight:700;color:#185FA5;">${(q*sz.price).toLocaleString()}원</span></div>`;  }).filter(Boolean).join('');
+    html+=`<div class="wlog-card"><div class="wlog-top" style="justify-content:space-between;"><div style="font-size:14px;font-weight:700;color:#555;">${fmtDate(l.date)}</div><div style="display:flex;gap:6px;"><button class="btn btn-o btn-sm" onclick="openEditModal(${l.id})">✏️ 수정</button><button class="btn btn-r btn-sm" onclick="deleteLog2(${l.id})">🗑</button></div></div><div class="wlog-rows">${rows}</div><div style="text-align:right;font-size:15px;font-weight:800;color:#185FA5;margin-top:8px;">${logTotal(l).toLocaleString()}원</div></div>`;
   });
   el.innerHTML=html;
 }
-function deleteLog2(id){
-  if(!confirm('이 내역을 삭제하시겠습니까?'))return;
-  state.logs=state.logs.filter(l=>l.id!==id);
-  save();renderWorkerLogs();renderHome();
-}
+function deleteLog2(id){if(!confirm('이 내역을 삭제하시겠습니까?'))return;state.logs=state.logs.filter(l=>l.id!==id);save();renderWorkerLogs();renderHome();}
 
 // ── 수정 모달 ──
 function openEditModal(id){
-  const log=state.logs.find(l=>l.id===id);
-  if(!log)return;
+  const log=state.logs.find(l=>l.id===id);if(!log)return;
   document.getElementById('modal-title').textContent=`수정 — ${log.worker} (${log.date})`;
-  const qInputs=state.sizes.map((sz,i)=>{
-    const c=szColor(i);
-    const q=log.qtys[sz.id]||0;
+  document.getElementById('modal-body').innerHTML=state.sizes.map((sz,i)=>{
+    const c=szColor(i);const q=log.qtys[sz.id]||0;
     return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f3f3f3;">
       <span class="badge" style="background:${c.bg};color:${c.color};font-size:13px;padding:5px 12px;">${sz.name}</span>
       <div style="display:flex;align-items:center;gap:8px;">
         <button class="sq-btn" onclick="adjModal('m-${sz.id}',-1)">－</button>
         <input class="sq-input" id="m-${sz.id}" type="number" value="${q}" min="0" inputmode="numeric" style="width:70px;">
         <button class="sq-btn" onclick="adjModal('m-${sz.id}',1)">＋</button>
-      </div>
-    </div>`;
-  }).join('');
-  document.getElementById('modal-body').innerHTML=`
-    ${qInputs}
-    <button class="btn btn-p" style="margin-top:16px;" onclick="saveEdit(${id})">💾 저장</button>
-  `;
+      </div></div>`;
+  }).join('')+`<button class="btn btn-p" style="margin-top:16px;" onclick="saveEdit(${id})">💾 저장</button>`;
   document.getElementById('modal-overlay').style.display='flex';
 }
-function adjModal(inputId,delta){
-  const inp=document.getElementById(inputId);
-  inp.value=Math.max(0,(parseInt(inp.value)||0)+delta);
-}
+function adjModal(inputId,delta){const inp=document.getElementById(inputId);inp.value=Math.max(0,(parseInt(inp.value)||0)+delta);}
 function saveEdit(id){
-  const log=state.logs.find(l=>l.id===id);
-  if(!log)return;
-  const newQtys={};
-  state.sizes.forEach(sz=>{newQtys[sz.id]=parseInt(document.getElementById('m-'+sz.id).value)||0;});
-  const total=Object.values(newQtys).reduce((s,v)=>s+v,0);
-  if(total===0){if(!confirm('수량이 모두 0입니다. 이 내역을 삭제하시겠습니까?'))return;state.logs=state.logs.filter(l=>l.id!==id);}
-  else{log.qtys=newQtys;}
-  save();closeModal();
-  renderDateLogs(curLogFilter);
-  renderWorkerLogs();
-  renderHome();
+  const log=state.logs.find(l=>l.id===id);if(!log)return;
+  const newQtys={};state.sizes.forEach(sz=>{newQtys[sz.id]=parseInt(document.getElementById('m-'+sz.id).value)||0;});
+  if(!Object.values(newQtys).reduce((s,v)=>s+v,0)){if(!confirm('수량이 모두 0입니다. 삭제하시겠습니까?'))return;state.logs=state.logs.filter(l=>l.id!==id);}
+  else log.qtys=newQtys;
+  save();closeModal();renderDateLogs(curLogFilter);renderWorkerLogs();renderHome();
 }
-function closeModal(e){
-  if(e&&e.target!==document.getElementById('modal-overlay'))return;
-  document.getElementById('modal-overlay').style.display='none';
-}
+function closeModal(e){if(e&&e.target!==document.getElementById('modal-overlay'))return;document.getElementById('modal-overlay').style.display='none';}
 
-// ══ 지급 ══
+// ── 지급 ──
 let curPayFilter='month';
 function filterPay(p,btn){
   curPayFilter=p;
-  document.querySelectorAll('#page-pay .pbtn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+  document.querySelectorAll('#page-pay .pbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
   const rangeEl=document.getElementById('pay-date-range');
-  if(p==='custom'){
-    rangeEl.style.display='block';
-    // 기본값: 해당 월 1일 ~ 기준일
-    const ref=getRefDate();
-    if(!document.getElementById('pay-from').value) document.getElementById('pay-from').value=ref.slice(0,7)+'-01';
-    if(!document.getElementById('pay-to').value) document.getElementById('pay-to').value=ref;
-  } else {
-    rangeEl.style.display='none';
-  }
+  if(p==='custom'){rangeEl.style.display='block';const ref=getRefDate();if(!document.getElementById('pay-from').value)document.getElementById('pay-from').value=ref.slice(0,7)+'-01';if(!document.getElementById('pay-to').value)document.getElementById('pay-to').value=ref;}
+  else rangeEl.style.display='none';
   renderPay(p);
 }
 function getPayLogs(period){
-  if(period==='custom'){
-    const from=document.getElementById('pay-from').value;
-    const to=document.getElementById('pay-to').value;
-    if(!from||!to) return [];
-    return state.logs.filter(l=>l.date>=from&&l.date<=to);
-  }
+  if(period==='custom'){const from=document.getElementById('pay-from').value;const to=document.getElementById('pay-to').value;if(!from||!to)return[];return state.logs.filter(l=>l.date>=from&&l.date<=to);}
   return filterByPeriod([...state.logs],period);
 }
 function renderPay(period){
@@ -699,280 +890,194 @@ function renderPay(period){
   const total=logs.reduce((s,l)=>s+logTotal(l),0);
   const ref=getRefDate();
   const monthLabel=new Date(ref+'T00:00:00').toLocaleDateString('ko-KR',{year:'numeric',month:'long'});
-  let periodLabel='전체';
-  if(period==='month') periodLabel=monthLabel;
-  if(period==='custom'){
-    const from=document.getElementById('pay-from').value;
-    const to=document.getElementById('pay-to').value;
-    if(from&&to){
-      const fd=new Date(from+'T00:00:00').toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
-      const td=new Date(to+'T00:00:00').toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
-      periodLabel=fd+' ~ '+td;
-    }
-  }
-
+  let periodLabel=period==='all'?'전체':period==='month'?monthLabel:'';
+  if(period==='custom'){const from=document.getElementById('pay-from').value;const to=document.getElementById('pay-to').value;if(from&&to){const fd=new Date(from+'T00:00:00').toLocaleDateString('ko-KR',{month:'long',day:'numeric'});const td=new Date(to+'T00:00:00').toLocaleDateString('ko-KR',{month:'long',day:'numeric'});periodLabel=fd+' ~ '+td;}}
   let html=`<div class="total-card"><div class="total-label">${periodLabel} 총 지급액</div><div class="total-val">${total.toLocaleString()}원</div></div>`;
-
-  // 날짜별 그룹 (날짜 지정일 때 추가 표시)
-  if(period==='custom'&&logs.length>0){
-    const groups={};
-    logs.forEach(l=>{if(!groups[l.date])groups[l.date]=[];groups[l.date].push(l);});
+  if(period==='custom'&&logs.length){
+    const groups={};logs.forEach(l=>{if(!groups[l.date])groups[l.date]=[];groups[l.date].push(l);});
     const dates=Object.keys(groups).sort();
-    html+=`<div style="font-size:11px;font-weight:700;color:#999;margin:14px 0 7px;text-transform:uppercase;letter-spacing:.6px;">작업일별 내역</div>`;
+    html+=`<div class="sec">작업일별 내역</div>`;
     dates.forEach(date=>{
-      const dl=groups[date];
-      const dAmt=dl.reduce((s,l)=>s+logTotal(l),0);
-      const dQty=dl.reduce((s,l)=>s+logQtyTotal(l),0);
-      html+=`<div style="background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <span style="font-size:14px;font-weight:700;color:#555;">${fmtDate(date)}</span>
-          <span style="font-size:13px;color:#aaa;">${dQty}개 · ${dAmt.toLocaleString()}원</span>
-        </div>`;
-      dl.forEach(l=>{
-        const badges=state.sizes.map((sz,i)=>{
-          const q=l.qtys[sz.id]||0;if(!q)return '';
-          const c=szColor(i);
-          return `<span class="badge" style="background:${c.bg};color:${c.color};">${sz.name} ${q}개</span>`;
-        }).join('');
-        html+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-top:1px solid #f5f5f5;">
-          <div><span style="font-size:13px;font-weight:600;">${l.worker}</span><div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:3px;">${badges}</div></div>
-          <span style="font-size:13px;font-weight:700;color:#185FA5;">${logTotal(l).toLocaleString()}원</span>
-        </div>`;
-      });
+      const dl=groups[date];const dAmt=dl.reduce((s,l)=>s+logTotal(l),0);const dQty=dl.reduce((s,l)=>s+logQtyTotal(l),0);
+      html+=`<div style="background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span style="font-size:14px;font-weight:700;color:#555;">${fmtDate(date)}</span><span style="font-size:13px;color:#aaa;">${dQty}개 · ${dAmt.toLocaleString()}원</span></div>`;
+      dl.forEach(l=>{const badges=state.sizes.map((sz,i)=>{const q=l.qtys[sz.id]||0;if(!q)return '';const c=szColor(i);return `<span class="badge" style="background:${c.bg};color:${c.color};">${sz.name} ${q}개</span>`;  }).join('');html+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-top:1px solid #f5f5f5;"><div><span style="font-size:13px;font-weight:600;">${l.worker}</span><div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:3px;">${badges}</div></div><span style="font-size:13px;font-weight:700;color:#185FA5;">${logTotal(l).toLocaleString()}원</span></div>`;  });
       html+=`</div>`;
     });
-    html+=`<div style="font-size:11px;font-weight:700;color:#999;margin:14px 0 7px;text-transform:uppercase;letter-spacing:.6px;">작업자별 합계</div>`;
+    html+=`<div class="sec">작업자별 합계</div>`;
   }
-
   state.workers.forEach(w=>{
     const wl=logs.filter(l=>l.worker===w);
     const qty=wl.reduce((s,l)=>s+logQtyTotal(l),0);
     const amt=wl.reduce((s,l)=>s+logTotal(l),0);
-    const breakdown=state.sizes.map((sz,i)=>{
-      const c=szColor(i);
-      const q=wl.reduce((s,l)=>s+(l.qtys[sz.id]||0),0);
-      if(!q)return '';
-      return `<span class="badge" style="background:${c.bg};color:${c.color};margin:2px;">${sz.name} ${q}개 · ${(q*sz.price).toLocaleString()}원</span>`;
-    }).join('');
-    html+=`<div class="pay-card">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-        <div>
-          <div style="font-size:16px;font-weight:700;">${w}</div>
-          <div style="font-size:12px;color:#aaa;margin:3px 0;">총 ${qty}개</div>
-          <div style="display:flex;flex-wrap:wrap;">${breakdown||'<span style="font-size:12px;color:#ccc;">작업 없음</span>'}</div>
-        </div>
-        <div style="font-size:20px;font-weight:800;color:#185FA5;padding-left:8px;">${amt.toLocaleString()}원</div>
-      </div>
-    </div>`;
+    const breakdown=state.sizes.map((sz,i)=>{const c=szColor(i);const q=wl.reduce((s,l)=>s+(l.qtys[sz.id]||0),0);if(!q)return '';return `<span class="badge" style="background:${c.bg};color:${c.color};margin:2px;">${sz.name} ${q}개 · ${(q*sz.price).toLocaleString()}원</span>`;  }).join('');
+    html+=`<div class="pay-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;"><div><div style="font-size:16px;font-weight:700;">${w}</div><div style="font-size:12px;color:#aaa;margin:3px 0;">총 ${qty}개</div><div style="display:flex;flex-wrap:wrap;">${breakdown||'<span style="font-size:12px;color:#ccc;">작업 없음</span>'}</div></div><div style="font-size:20px;font-weight:800;color:#185FA5;padding-left:8px;">${amt.toLocaleString()}원</div></div></div>`;
   });
-
   document.getElementById('pay-summary').innerHTML=html;
-  document.getElementById('pay-export-btn').style.display=(logs.length>0)?'block':'none';
+  document.getElementById('pay-export-btn').style.display=logs.length?'block':'none';
 }
-
-// ── PDF 내보내기 ──
 function exportPDF(){
-  const logs=getPayLogs(curPayFilter);
-  if(!logs.length){alert('내보낼 데이터가 없습니다.');return;}
-
-  const ref=getRefDate();
-  let periodLabel='전체 기간';
-  if(curPayFilter==='month'){
-    periodLabel=new Date(ref+'T00:00:00').toLocaleDateString('ko-KR',{year:'numeric',month:'long'});
-  } else if(curPayFilter==='custom'){
-    const from=document.getElementById('pay-from').value;
-    const to=document.getElementById('pay-to').value;
-    const fd=new Date(from+'T00:00:00').toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
-    const td=new Date(to+'T00:00:00').toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
-    periodLabel=fd+' ~ '+td;
-  }
-
+  const logs=getPayLogs(curPayFilter);if(!logs.length){alert('내보낼 데이터가 없습니다.');return;}
+  const sites=getSiteList();const site=sites.find(x=>x.id===currentSiteId);const siteName=site?site.name:'현장';
+  const ref=getRefDate();let periodLabel='전체 기간';
+  if(curPayFilter==='month') periodLabel=new Date(ref+'T00:00:00').toLocaleDateString('ko-KR',{year:'numeric',month:'long'});
+  else if(curPayFilter==='custom'){const from=document.getElementById('pay-from').value;const to=document.getElementById('pay-to').value;const fd=new Date(from+'T00:00:00').toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});const td=new Date(to+'T00:00:00').toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});periodLabel=fd+' ~ '+td;}
   const totalAmt=logs.reduce((s,l)=>s+logTotal(l),0);
-
-  // 날짜별 그룹
-  const groups={};
-  logs.forEach(l=>{if(!groups[l.date])groups[l.date]=[];groups[l.date].push(l);});
+  const groups={};logs.forEach(l=>{if(!groups[l.date])groups[l.date]=[];groups[l.date].push(l);});
   const dates=Object.keys(groups).sort();
-
-  // 날짜별 테이블 rows
   let dateRows='';
   dates.forEach(date=>{
     const dl=groups[date];
-    const rowspan=dl.length;
     dl.forEach((l,i)=>{
       const szCells=state.sizes.map(sz=>`<td style="text-align:right;padding:6px 8px;">${l.qtys[sz.id]||0}</td>`).join('');
-      const amt=logTotal(l);
-      const dateCell=i===0?`<td rowspan="${rowspan}" style="text-align:center;padding:6px 8px;border-right:1px solid #ddd;font-weight:600;background:#f9f9f9;">${new Date(date+'T00:00:00').toLocaleDateString('ko-KR',{month:'long',day:'numeric'})}</td>`:'';
-      dateRows+=`<tr style="border-bottom:1px solid #eee;">${dateCell}<td style="padding:6px 8px;">${l.worker}</td>${szCells}<td style="text-align:right;padding:6px 8px;font-weight:700;color:#185FA5;">${amt.toLocaleString()}원</td></tr>`;
+      const dateCell=i===0?`<td rowspan="${dl.length}" style="text-align:center;padding:6px 8px;border-right:1px solid #ddd;font-weight:600;background:#f9f9f9;">${new Date(date+'T00:00:00').toLocaleDateString('ko-KR',{month:'long',day:'numeric'})}</td>`:'';
+      dateRows+=`<tr style="border-bottom:1px solid #eee;">${dateCell}<td style="padding:6px 8px;">${l.worker}</td>${szCells}<td style="text-align:right;padding:6px 8px;font-weight:700;color:#185FA5;">${logTotal(l).toLocaleString()}원</td></tr>`;
     });
   });
-
-  // 작업자별 합계 rows
   let workerRows='';
   state.workers.forEach(w=>{
-    const wl=logs.filter(l=>l.worker===w);
-    if(!wl.length)return;
-    const szCells=state.sizes.map(sz=>{
-      const q=wl.reduce((s,l)=>s+(l.qtys[sz.id]||0),0);
-      return `<td style="text-align:right;padding:6px 8px;">${q}</td>`;
-    }).join('');
-    const amt=wl.reduce((s,l)=>s+logTotal(l),0);
-    const qty=wl.reduce((s,l)=>s+logQtyTotal(l),0);
-    workerRows+=`<tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;font-weight:600;">${w}</td>${szCells}<td style="text-align:right;padding:6px 8px;font-weight:700;color:#185FA5;">${amt.toLocaleString()}원</td></tr>`;
+    const wl=logs.filter(l=>l.worker===w);if(!wl.length)return;
+    const szCells=state.sizes.map(sz=>`<td style="text-align:right;padding:6px 8px;">${wl.reduce((s,l)=>s+(l.qtys[sz.id]||0),0)}</td>`).join('');
+    workerRows+=`<tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;font-weight:600;">${w}</td>${szCells}<td style="text-align:right;padding:6px 8px;font-weight:700;color:#185FA5;">${wl.reduce((s,l)=>s+logTotal(l),0).toLocaleString()}원</td></tr>`;
   });
-
   const sizeHeaders=state.sizes.map(sz=>`<th style="padding:8px;background:#185FA5;color:#fff;text-align:center;">${sz.name}</th>`).join('');
-
-  const now=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
-
-  const pdfHTML=`<!DOCTYPE html>
-<html lang="ko"><head><meta charset="UTF-8">
-<title>계량기 교체 작업 지급 내역</title>
-<style>
-  body{font-family:'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif;margin:0;padding:20px;color:#1a1a1a;font-size:13px;}
-  h1{font-size:20px;font-weight:700;color:#185FA5;margin:0 0 4px;}
-  .sub{font-size:13px;color:#666;margin-bottom:20px;}
-  .print-date{font-size:12px;color:#999;text-align:right;margin-bottom:16px;}
-  table{width:100%;border-collapse:collapse;margin-bottom:24px;}
-  th{padding:8px;background:#185FA5;color:#fff;text-align:center;font-size:12px;}
-  td{font-size:12px;}
-  .section-title{font-size:14px;font-weight:700;color:#185FA5;margin:20px 0 8px;padding-bottom:6px;border-bottom:2px solid #185FA5;}
-  .total-box{background:#f0f6ff;border:2px solid #185FA5;border-radius:8px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
-  .total-box .tl{font-size:13px;color:#555;}
-  .total-box .tv{font-size:24px;font-weight:800;color:#185FA5;}
-  @media print{body{padding:10px;}button{display:none!important;}}
-</style>
-</head><body>
-<div class="print-date">출력일: ${now}</div>
-<h1>💧 계량기 교체 작업 지급 내역</h1>
-<div class="sub">기간: ${periodLabel}</div>
-<div class="total-box">
-  <div class="tl">총 지급액</div>
-  <div class="tv">${totalAmt.toLocaleString()}원</div>
-</div>
-<div class="section-title">📅 작업일별 상세 내역</div>
-<table>
-  <thead><tr>
-    <th style="width:90px;">작업일</th>
-    <th style="width:70px;">작업자</th>
-    ${sizeHeaders}
-    <th>지급액</th>
-  </tr></thead>
-  <tbody>${dateRows}</tbody>
-</table>
-<div class="section-title">👷 작업자별 합계</div>
-<table>
-  <thead><tr>
-    <th style="width:80px;">작업자</th>
-    ${sizeHeaders}
-    <th>합계</th>
-  </tr></thead>
-  <tbody>${workerRows}</tbody>
-</table>
-<div style="text-align:center;margin-top:30px;">
-  <button onclick="window.print()" style="padding:12px 32px;background:#185FA5;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;">🖨️ 인쇄 / PDF 저장</button>
-</div>
-</body></html>`;
-
+  const pdfHTML=`<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>지급내역_${siteName}</title>
+  <style>body{font-family:'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif;margin:0;padding:20px;color:#1a1a1a;font-size:13px;}h1{font-size:20px;font-weight:700;color:#185FA5;margin:0 0 4px;}table{width:100%;border-collapse:collapse;margin-bottom:24px;}th{padding:8px;background:#185FA5;color:#fff;text-align:center;font-size:12px;}td{font-size:12px;}.section-title{font-size:14px;font-weight:700;color:#185FA5;margin:20px 0 8px;padding-bottom:6px;border-bottom:2px solid #185FA5;}.total-box{background:#f0f6ff;border:2px solid #185FA5;border-radius:8px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}.total-box .tv{font-size:24px;font-weight:800;color:#185FA5;}@media print{button{display:none!important;}}</style></head><body>
+  <div style="text-align:right;font-size:12px;color:#999;margin-bottom:8px;">출력일: ${new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'})}</div>
+  <h1>💧 ${siteName} · 지급 내역</h1><div style="font-size:13px;color:#666;margin-bottom:16px;">기간: ${periodLabel}</div>
+  <div class="total-box"><div style="font-size:13px;color:#555;">총 지급액</div><div class="tv">${totalAmt.toLocaleString()}원</div></div>
+  <div class="section-title">📅 작업일별 상세</div>
+  <table><thead><tr><th style="width:90px;">작업일</th><th style="width:70px;">작업자</th>${sizeHeaders}<th>지급액</th></tr></thead><tbody>${dateRows}</tbody></table>
+  <div class="section-title">👷 작업자별 합계</div>
+  <table><thead><tr><th style="width:80px;">작업자</th>${sizeHeaders}<th>합계</th></tr></thead><tbody>${workerRows}</tbody></table>
+  <div style="text-align:center;margin-top:30px;"><button onclick="window.print()" style="padding:12px 32px;background:#185FA5;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;">🖨️ 인쇄 / PDF 저장</button></div>
+  </body></html>`;
   const blob=new Blob([pdfHTML],{type:'text/html;charset=utf-8'});
   const url=URL.createObjectURL(blob);
   const win=window.open(url,'_blank');
-  if(!win){
-    // 팝업 차단 시 다운로드로 대체
-    const a=document.createElement('a');
-    a.href=url; a.download='계량기_지급내역.html';
-    a.click();
-  }
+  if(!win){const a=document.createElement('a');a.href=url;a.download='지급내역_'+siteName+'.html';a.click();}
   setTimeout(()=>URL.revokeObjectURL(url),60000);
 }
 
-// ══ 설정 ══
-// 단가 임시 저장용
-let pendingPrices = {};
-
+// ── 설정 ──
+let pendingPrices={};
 function renderSettings(){
-  document.getElementById('worker-list').innerHTML=state.workers.length===0
+  document.getElementById('worker-list').innerHTML=!state.workers.length
     ?'<div style="font-size:13px;color:#ccc;padding:8px 0;">등록된 작업자가 없습니다</div>'
     :state.workers.map((w,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f3f3f3;">
         <div style="display:flex;align-items:center;gap:10px;"><div class="avatar">${w.slice(0,2)}</div><span style="font-size:15px;font-weight:600;">${w}</span></div>
-        <button onclick="removeWorker(${i})" style="background:none;border:none;font-size:22px;color:#ddd;cursor:pointer;">🗑</button>
-      </div>`).join('');
-
-  // pendingPrices 초기화 (현재 저장된 단가로)
-  pendingPrices = {};
-  state.sizes.forEach(sz => { pendingPrices[sz.id] = sz.price; });
-
-  document.getElementById('price-list').innerHTML = state.sizes.map((sz,i) => {
-    const c = szColor(i);
+        <button onclick="removeWorker(${i})" class="site-del-btn">🗑</button></div>`).join('');
+  pendingPrices={};state.sizes.forEach(sz=>{pendingPrices[sz.id]=sz.price;});
+  document.getElementById('price-list').innerHTML=state.sizes.map((sz,i)=>{
+    const c=szColor(i);
     return `<div class="price-row" id="prow-${sz.id}">
       <span class="badge" style="background:${c.bg};color:${c.color};font-size:13px;padding:6px 13px;">${sz.name}</span>
       <div style="display:flex;align-items:center;gap:6px;">
-        <input type="number" id="pinput-${sz.id}"
-          style="width:120px;text-align:right;padding:9px 11px;border:1.5px solid #e5e5e5;border-radius:10px;font-size:14px;background:#fafafa;font-weight:600;"
-          value="${sz.price}" inputmode="numeric"
-          oninput="onPriceInput('${sz.id}',this.value)">
+        <input type="number" id="pinput-${sz.id}" style="width:120px;text-align:right;padding:9px 11px;border:1.5px solid #e5e5e5;border-radius:10px;font-size:14px;background:#fafafa;font-weight:600;" value="${sz.price}" inputmode="numeric" oninput="onPriceInput('${sz.id}',this.value)">
         <span style="font-size:13px;color:#aaa;">원/개</span>
-      </div>
-    </div>`;
-  }).join('') + `
-  <div id="price-save-bar" style="display:none;margin-top:14px;padding-top:14px;border-top:1.5px solid #f0f0f0;">
-    <div style="font-size:12px;color:#854F0B;background:#FAEEDA;border-radius:8px;padding:8px 12px;margin-bottom:10px;">
-      ⚠️ 변경된 단가가 있습니다. 저장하면 모든 작업 내역의 금액이 새 단가로 적용됩니다.
-    </div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn btn-o btn-sm" style="flex:1;" onclick="cancelPriceEdit()">취소</button>
-      <button class="btn btn-p btn-sm" style="flex:2;background:#185FA5;" onclick="savePrices()">✅ 저장 · 금액 적용</button>
-    </div>
+      </div></div>`;
+  }).join('')+`<div id="price-save-bar" style="display:none;margin-top:14px;padding-top:14px;border-top:1.5px solid #f0f0f0;">
+    <div style="font-size:12px;color:#854F0B;background:#FAEEDA;border-radius:8px;padding:8px 12px;margin-bottom:10px;">⚠️ 변경된 단가가 있습니다. 저장하면 모든 금액에 적용됩니다.</div>
+    <div style="display:flex;gap:8px;"><button class="btn btn-o btn-sm" style="flex:1;" onclick="cancelPriceEdit()">취소</button><button class="btn btn-p btn-sm" style="flex:2;" onclick="savePrices()">✅ 저장 · 금액 적용</button></div>
   </div>`;
 }
-
-function onPriceInput(id, val){
-  pendingPrices[id] = parseInt(val) || 0;
-  // 하나라도 기존 단가와 다르면 저장 바 표시
-  const changed = state.sizes.some(sz => pendingPrices[sz.id] !== sz.price);
-  document.getElementById('price-save-bar').style.display = changed ? 'block' : 'none';
-}
-
-function cancelPriceEdit(){
-  // 원래 단가로 복원
-  state.sizes.forEach(sz => {
-    const inp = document.getElementById('pinput-'+sz.id);
-    if(inp) inp.value = sz.price;
-    pendingPrices[sz.id] = sz.price;
-  });
-  document.getElementById('price-save-bar').style.display = 'none';
-}
-
+function onPriceInput(id,val){pendingPrices[id]=parseInt(val)||0;const changed=state.sizes.some(sz=>pendingPrices[sz.id]!==sz.price);document.getElementById('price-save-bar').style.display=changed?'block':'none';}
+function cancelPriceEdit(){state.sizes.forEach(sz=>{const inp=document.getElementById('pinput-'+sz.id);if(inp)inp.value=sz.price;pendingPrices[sz.id]=sz.price;});document.getElementById('price-save-bar').style.display='none';}
 function savePrices(){
-  const changes = state.sizes.filter(sz => pendingPrices[sz.id] !== sz.price);
-  if(!changes.length) return;
-
-  const changeDesc = changes.map(sz =>
-    `• ${sz.name}: ${sz.price.toLocaleString()}원 → ${pendingPrices[sz.id].toLocaleString()}원`
-  ).join('\n');
-
-  if(!confirm(`아래 단가를 변경하고\n모든 금액 계산에 적용할까요?\n\n${changeDesc}`)) return;
-
-  // 단가 저장
-  state.sizes.forEach(sz => { sz.price = pendingPrices[sz.id]; });
-  save();
-
-  document.getElementById('price-save-bar').style.display = 'none';
-
-  // 변경 내용 요약 표시
-  const totalAmt = state.logs.reduce((s,l) => s + logTotal(l), 0);
-  alert(`✅ 단가가 저장되었습니다.\n\n${changeDesc}\n\n전체 작업 내역 총액: ${totalAmt.toLocaleString()}원`);
-
-  renderSettings();
-  // 다른 화면도 갱신
-  renderHome();
+  const changes=state.sizes.filter(sz=>pendingPrices[sz.id]!==sz.price);if(!changes.length)return;
+  const desc=changes.map(sz=>`• ${sz.name}: ${sz.price.toLocaleString()}원 → ${pendingPrices[sz.id].toLocaleString()}원`).join('\n');
+  if(!confirm(`아래 단가를 변경할까요?\n\n${desc}`))return;
+  state.sizes.forEach(sz=>{sz.price=pendingPrices[sz.id];});save();
+  document.getElementById('price-save-bar').style.display='none';
+  alert(`✅ 단가가 저장되었습니다.\n\n${desc}`);
+  renderSettings();renderHome();
 }
+function addWorker(){
+  const n=document.getElementById('new-worker').value.trim();if(!n)return;
+  if(state.workers.includes(n)){alert('이미 등록된 작업자입니다.');return;}
+  state.workers.push(n);save();document.getElementById('new-worker').value='';renderSettings();
+}
+function removeWorker(i){if(!confirm(`"${state.workers[i]}"을(를) 삭제하시겠습니까?`))return;state.workers.splice(i,1);save();renderSettings();}
 function clearData(){
-  if(!confirm('모든 데이터를 초기화하시겠습니까?\n이 작업은 되돌릴 수 없습니다.'))return;
-  localStorage.removeItem('meterapp2');location.reload();
+  if(!confirm('이 현장의 모든 데이터를 초기화하시겠습니까?\n작업 내역이 모두 삭제됩니다.'))return;
+  state={workers:[],sizes:[{id:'s1',name:'13mm',price:14000},{id:'s2',name:'20~32mm',price:14000},{id:'s3',name:'40~50mm',price:14000},{id:'s4',name:'기타',price:14000}],logs:[]};
+  save();showPage('home');renderSettings();
 }
 
-renderHome();renderSettings();
+// ── 초기화 ──
+// 최초 실행 시 두 현장 자동 생성
+(function(){
+  try {
+    const existing = localStorage.getItem('meter_sites');
+    if (!existing || JSON.parse(existing).length === 0) {
+      const id1 = 'site_dongbuk';
+      const id2 = 'site_seonam';
+
+      // 현장 목록 등록
+      localStorage.setItem('meter_sites', JSON.stringify([
+        {id: id1, name: '동북 디지털계량기'},
+        {id: id2, name: '서남광산 디지털계량기'}
+      ]));
+
+      // 동북 현장: 빈 데이터
+      localStorage.setItem('meter_site_' + id1, JSON.stringify({
+        workers: [],
+        sizes: [
+          {id:'s1',name:'13mm',price:14000},
+          {id:'s2',name:'20~32mm',price:14000},
+          {id:'s3',name:'40~50mm',price:14000},
+          {id:'s4',name:'기타',price:14000}
+        ],
+        logs: []
+      }));
+
+      // 서남광산 현장: 기존 데이터 적용
+      const seonamLogs = [
+        {id:1700000000000,date:"2026-05-18",worker:"김영진",qtys:{s1:14,s2:0,s3:0,s4:0}},
+        {id:1700000000001,date:"2026-05-20",worker:"김영진",qtys:{s1:20,s2:1,s3:0,s4:0}},
+        {id:1700000000002,date:"2026-05-21",worker:"김영진",qtys:{s1:43,s2:0,s3:0,s4:0}},
+        {id:1700000000003,date:"2026-05-26",worker:"김영진",qtys:{s1:45,s2:1,s3:0,s4:0}},
+        {id:1700000000004,date:"2026-05-28",worker:"김영진",qtys:{s1:22,s2:0,s3:1,s4:0}},
+        {id:1700000000005,date:"2026-05-29",worker:"김영진",qtys:{s1:28,s2:2,s3:0,s4:0}},
+        {id:1700000000006,date:"2026-05-30",worker:"김영진",qtys:{s1:29,s2:0,s3:0,s4:0}},
+        {id:1700000000007,date:"2026-05-31",worker:"김영진",qtys:{s1:42,s2:0,s3:0,s4:0}},
+        {id:1700000000008,date:"2026-06-02",worker:"김영진",qtys:{s1:22,s2:0,s3:0,s4:0}},
+        {id:1700000000009,date:"2026-06-02",worker:"이광득",qtys:{s1:22,s2:0,s3:0,s4:0}},
+        {id:1700000000010,date:"2026-06-04",worker:"김영진",qtys:{s1:4,s2:1,s3:0,s4:0}},
+        {id:1700000000011,date:"2026-06-04",worker:"이광득",qtys:{s1:25,s2:1,s3:0,s4:0}},
+        {id:1700000000012,date:"2026-06-04",worker:"신현일",qtys:{s1:14,s2:0,s3:0,s4:0}},
+        {id:1700000000013,date:"2026-06-06",worker:"이광득",qtys:{s1:30,s2:0,s3:0,s4:0}},
+        {id:1700000000014,date:"2026-06-06",worker:"신현일",qtys:{s1:17,s2:1,s3:0,s4:0}},
+        {id:1700000000015,date:"2026-06-08",worker:"김영진",qtys:{s1:31,s2:0,s3:2,s4:0}},
+        {id:1700000000016,date:"2026-06-08",worker:"이광득",qtys:{s1:14,s2:1,s3:0,s4:0}},
+        {id:1700000000017,date:"2026-06-08",worker:"신현일",qtys:{s1:15,s2:0,s3:0,s4:0}},
+        {id:1700000000018,date:"2026-06-14",worker:"김영진",qtys:{s1:13,s2:0,s3:0,s4:0}},
+        {id:1700000000019,date:"2026-06-17",worker:"신현일",qtys:{s1:20,s2:0,s3:0,s4:0}},
+        {id:1700000000020,date:"2026-06-17",worker:"이광득",qtys:{s1:23,s2:1,s3:0,s4:0}},
+        {id:1700000000021,date:"2026-06-17",worker:"김영진",qtys:{s1:26,s2:1,s3:0,s4:0}},
+        {id:1700000000022,date:"2026-06-18",worker:"신현일",qtys:{s1:16,s2:0,s3:0,s4:0}},
+        {id:1700000000023,date:"2026-06-18",worker:"이광득",qtys:{s1:31,s2:0,s3:0,s4:0}},
+        {id:1700000000024,date:"2026-06-18",worker:"김영진",qtys:{s1:24,s2:1,s3:0,s4:0}},
+        {id:1700000000025,date:"2026-06-19",worker:"이광득",qtys:{s1:17,s2:0,s3:0,s4:0}},
+        {id:1700000000026,date:"2026-06-19",worker:"김영진",qtys:{s1:30,s2:1,s3:0,s4:0}},
+        {id:1700000000027,date:"2026-06-21",worker:"김영진",qtys:{s1:33,s2:0,s3:0,s4:0}},
+        {id:1700000000028,date:"2026-06-23",worker:"김영진",qtys:{s1:1,s2:0,s3:0,s4:0}},
+        {id:1700000000029,date:"2026-06-25",worker:"김영진",qtys:{s1:34,s2:1,s3:0,s4:0}}
+      ];
+      localStorage.setItem('meter_site_' + id2, JSON.stringify({
+        workers: ['김영진','이광득','신현일'],
+        sizes: [
+          {id:'s1',name:'13mm',price:14000},
+          {id:'s2',name:'20~32mm',price:14000},
+          {id:'s3',name:'40~50mm',price:14000},
+          {id:'s4',name:'기타',price:14000}
+        ],
+        logs: seonamLogs
+      }));
+    }
+  } catch(e) {}
+})();
+
+renderSiteList();
 </script>
 </body>
 </html>
