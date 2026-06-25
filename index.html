@@ -151,6 +151,31 @@ select:focus,input:focus{border-color:#185FA5;background:#fff;}
       <button class="main-tab" onclick="switchMainTab('summary',this)">📊 전체 합산</button>
     </div>
   </div>
+
+  <!-- 앱 설치 배너 (Android Chrome 자동) -->
+  <div id="install-banner" style="display:none;background:#fff;border-left:4px solid #185FA5;margin:12px 14px 0;border-radius:12px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.1);display:none;align-items:center;gap:12px;">
+    <span style="font-size:28px;">📲</span>
+    <div style="flex:1;">
+      <div style="font-size:14px;font-weight:700;color:#185FA5;">앱으로 설치하기</div>
+      <div style="font-size:12px;color:#888;margin-top:2px;">홈 화면에 추가하면 앱처럼 사용 가능</div>
+    </div>
+    <button onclick="installApp()" style="background:#185FA5;color:#fff;border:none;border-radius:10px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">설치</button>
+    <button onclick="document.getElementById('install-banner').style.display='none'" style="background:none;border:none;font-size:20px;color:#ccc;cursor:pointer;">✕</button>
+  </div>
+
+  <!-- iOS 설치 안내 배너 -->
+  <div id="ios-banner" style="display:none;background:#fff;border-left:4px solid #185FA5;margin:12px 14px 0;border-radius:12px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div style="font-size:14px;font-weight:700;color:#185FA5;margin-bottom:8px;">📲 홈 화면에 앱 추가하기 (iPhone)</div>
+      <button onclick="document.getElementById('ios-banner').style.display='none'" style="background:none;border:none;font-size:20px;color:#ccc;cursor:pointer;margin-top:-4px;">✕</button>
+    </div>
+    <div style="font-size:13px;color:#555;line-height:1.8;">
+      <div>① 하단 <b>공유 버튼</b> (□↑) 탭</div>
+      <div>② 스크롤 내려서 <b>홈 화면에 추가</b> 탭</div>
+      <div>③ 오른쪽 상단 <b>추가</b> 탭</div>
+    </div>
+  </div>
+
   <div class="site-body">
     <!-- 현장 목록 뷰 -->
     <div class="summary-view active" id="view-sites">
@@ -311,7 +336,34 @@ const MF={name:'계량기 교체 관리',short_name:'계량기관리',start_url:
 const mb=new Blob([JSON.stringify(MF)],{type:'application/json'});
 const ml=document.createElement('link');ml.rel='manifest';ml.href=URL.createObjectURL(mb);document.head.appendChild(ml);
 
-// ── 날짜 ──
+// ── 설치 프롬프트 ──
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const banner = document.getElementById('install-banner');
+  banner.style.display = 'flex';
+});
+window.addEventListener('appinstalled', () => {
+  document.getElementById('install-banner').style.display = 'none';
+  deferredPrompt = null;
+});
+function installApp() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => {
+      deferredPrompt = null;
+      document.getElementById('install-banner').style.display = 'none';
+    });
+  }
+}
+
+// iOS 감지 → 설치 안내 배너 표시 (standalone 모드가 아닐 때만)
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isStandalone = window.navigator.standalone === true;
+if (isIOS && !isStandalone) {
+  document.getElementById('ios-banner').style.display = 'block';
+}
 const today=new Date();
 const todayStr=today.toISOString().split('T')[0];
 const todayFmt=today.toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
