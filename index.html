@@ -596,6 +596,8 @@ function toggleSumCard(uid){
   const el = document.getElementById(uid);
   if(el) el.classList.toggle('open');
 }
+
+function renderSiteList(){
   const sites=getSiteList();
   const el=document.getElementById('site-list');
   if(!sites.length){
