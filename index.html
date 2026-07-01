@@ -364,7 +364,10 @@ const COLORS=[
   {bg:'#E6F1FB',color:'#0C447C'},
   {bg:'#EAF3DE',color:'#3B6D11'},
   {bg:'#FAEEDA',color:'#854F0B'},
-  {bg:'#FAECE7',color:'#993C1D'}
+  {bg:'#FAECE7',color:'#993C1D'},
+  {bg:'#EDE7F6',color:'#4A148C'},
+  {bg:'#E0F2F1',color:'#004D40'},
+  {bg:'#FBE9E7',color:'#BF360C'}
 ];
 const SITE_COLORS=['#185FA5','#2E7D32','#6A1B9A','#B71C1C','#E65100','#00695C'];
 const SITE_EMOJIS=['🏗️','🌊','🏢','🏭','🏘️','⚙️'];
@@ -389,9 +392,12 @@ function getSiteData(id){
     workers:[],
     sizes:[
       {id:'s1',name:'13mm',price:14000},
-      {id:'s2',name:'20~32mm',price:14000},
-      {id:'s3',name:'40~50mm',price:14000},
-      {id:'s4',name:'기타',price:14000}
+      {id:'s2',name:'20mm',price:14000},
+      {id:'s3',name:'25mm',price:14000},
+      {id:'s4',name:'32mm',price:14000},
+      {id:'s5',name:'40mm',price:14000},
+      {id:'s6',name:'50mm',price:14000},
+      {id:'s7',name:'기타',price:14000}
     ],
     logs:[]
   };
@@ -1043,79 +1049,81 @@ function addWorker(){
 function removeWorker(i){if(!confirm(`"${state.workers[i]}"을(를) 삭제하시겠습니까?`))return;state.workers.splice(i,1);save();renderSettings();}
 function clearData(){
   if(!confirm('이 현장의 모든 데이터를 초기화하시겠습니까?\n작업 내역이 모두 삭제됩니다.'))return;
-  state={workers:[],sizes:[{id:'s1',name:'13mm',price:14000},{id:'s2',name:'20~32mm',price:14000},{id:'s3',name:'40~50mm',price:14000},{id:'s4',name:'기타',price:14000}],logs:[]};
+  state={workers:[],sizes:[{id:'s1',name:'13mm',price:14000},{id:'s2',name:'20mm',price:14000},{id:'s3',name:'25mm',price:14000},{id:'s4',name:'32mm',price:14000},{id:'s5',name:'40mm',price:14000},{id:'s6',name:'50mm',price:14000},{id:'s7',name:'기타',price:14000}],logs:[]};
   save();showPage('home');renderSettings();
 }
 
-// ── 초기화 ──
-// 최초 실행 시 두 현장 자동 생성
+// ── 사전 입력 데이터 ──
 (function(){
   try {
     const existing = localStorage.getItem('meter_sites');
     if (!existing || JSON.parse(existing).length === 0) {
       const id1 = 'site_dongbuk';
       const id2 = 'site_seonam';
-
-      // 현장 목록 등록
       localStorage.setItem('meter_sites', JSON.stringify([
         {id: id1, name: '동북 디지털계량기'},
         {id: id2, name: '서남광산 디지털계량기'}
       ]));
-
-      // 동북 현장: 빈 데이터
       localStorage.setItem('meter_site_' + id1, JSON.stringify({
         workers: [],
         sizes: [
           {id:'s1',name:'13mm',price:14000},
-          {id:'s2',name:'20~32mm',price:14000},
-          {id:'s3',name:'40~50mm',price:14000},
-          {id:'s4',name:'기타',price:14000}
+          {id:'s2',name:'20mm',price:14000},
+          {id:'s3',name:'25mm',price:14000},
+          {id:'s4',name:'32mm',price:14000},
+          {id:'s5',name:'40mm',price:14000},
+          {id:'s6',name:'50mm',price:14000},
+          {id:'s7',name:'기타',price:14000}
         ],
         logs: []
       }));
-
-      // 서남광산 현장: 기존 데이터 적용
-      const seonamLogs = [
-        {id:1700000000000,date:"2026-05-18",worker:"김영진",qtys:{s1:14,s2:0,s3:0,s4:0}},
-        {id:1700000000001,date:"2026-05-20",worker:"김영진",qtys:{s1:20,s2:1,s3:0,s4:0}},
-        {id:1700000000002,date:"2026-05-21",worker:"김영진",qtys:{s1:43,s2:0,s3:0,s4:0}},
-        {id:1700000000003,date:"2026-05-26",worker:"김영진",qtys:{s1:45,s2:1,s3:0,s4:0}},
-        {id:1700000000004,date:"2026-05-28",worker:"김영진",qtys:{s1:22,s2:0,s3:1,s4:0}},
-        {id:1700000000005,date:"2026-05-29",worker:"김영진",qtys:{s1:28,s2:2,s3:0,s4:0}},
-        {id:1700000000006,date:"2026-05-30",worker:"김영진",qtys:{s1:29,s2:0,s3:0,s4:0}},
-        {id:1700000000007,date:"2026-05-31",worker:"김영진",qtys:{s1:42,s2:0,s3:0,s4:0}},
-        {id:1700000000008,date:"2026-06-02",worker:"김영진",qtys:{s1:22,s2:0,s3:0,s4:0}},
-        {id:1700000000009,date:"2026-06-02",worker:"이광득",qtys:{s1:22,s2:0,s3:0,s4:0}},
-        {id:1700000000010,date:"2026-06-04",worker:"김영진",qtys:{s1:4,s2:1,s3:0,s4:0}},
-        {id:1700000000011,date:"2026-06-04",worker:"이광득",qtys:{s1:25,s2:1,s3:0,s4:0}},
-        {id:1700000000012,date:"2026-06-04",worker:"신현일",qtys:{s1:14,s2:0,s3:0,s4:0}},
-        {id:1700000000013,date:"2026-06-06",worker:"이광득",qtys:{s1:30,s2:0,s3:0,s4:0}},
-        {id:1700000000014,date:"2026-06-06",worker:"신현일",qtys:{s1:17,s2:1,s3:0,s4:0}},
-        {id:1700000000015,date:"2026-06-08",worker:"김영진",qtys:{s1:31,s2:0,s3:2,s4:0}},
-        {id:1700000000016,date:"2026-06-08",worker:"이광득",qtys:{s1:14,s2:1,s3:0,s4:0}},
-        {id:1700000000017,date:"2026-06-08",worker:"신현일",qtys:{s1:15,s2:0,s3:0,s4:0}},
-        {id:1700000000018,date:"2026-06-14",worker:"김영진",qtys:{s1:13,s2:0,s3:0,s4:0}},
-        {id:1700000000019,date:"2026-06-17",worker:"신현일",qtys:{s1:20,s2:0,s3:0,s4:0}},
-        {id:1700000000020,date:"2026-06-17",worker:"이광득",qtys:{s1:23,s2:1,s3:0,s4:0}},
-        {id:1700000000021,date:"2026-06-17",worker:"김영진",qtys:{s1:26,s2:1,s3:0,s4:0}},
-        {id:1700000000022,date:"2026-06-18",worker:"신현일",qtys:{s1:16,s2:0,s3:0,s4:0}},
-        {id:1700000000023,date:"2026-06-18",worker:"이광득",qtys:{s1:31,s2:0,s3:0,s4:0}},
-        {id:1700000000024,date:"2026-06-18",worker:"김영진",qtys:{s1:24,s2:1,s3:0,s4:0}},
-        {id:1700000000025,date:"2026-06-19",worker:"이광득",qtys:{s1:17,s2:0,s3:0,s4:0}},
-        {id:1700000000026,date:"2026-06-19",worker:"김영진",qtys:{s1:30,s2:1,s3:0,s4:0}},
-        {id:1700000000027,date:"2026-06-21",worker:"김영진",qtys:{s1:33,s2:0,s3:0,s4:0}},
-        {id:1700000000028,date:"2026-06-23",worker:"김영진",qtys:{s1:1,s2:0,s3:0,s4:0}},
-        {id:1700000000029,date:"2026-06-25",worker:"김영진",qtys:{s1:34,s2:1,s3:0,s4:0}}
-      ];
       localStorage.setItem('meter_site_' + id2, JSON.stringify({
         workers: ['김영진','이광득','신현일'],
         sizes: [
           {id:'s1',name:'13mm',price:14000},
-          {id:'s2',name:'20~32mm',price:14000},
-          {id:'s3',name:'40~50mm',price:14000},
-          {id:'s4',name:'기타',price:14000}
+          {id:'s2',name:'20mm',price:14000},
+          {id:'s3',name:'25mm',price:14000},
+          {id:'s4',name:'32mm',price:14000},
+          {id:'s5',name:'40mm',price:14000},
+          {id:'s6',name:'50mm',price:14000},
+          {id:'s7',name:'기타',price:14000}
         ],
-        logs: seonamLogs
+        logs: [
+        {id:1700000000000,date:"2026-05-18",worker:"김영진",qtys:{s1:14,s2:0,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000001,date:"2026-05-20",worker:"김영진",qtys:{s1:20,s2:1,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000002,date:"2026-05-21",worker:"김영진",qtys:{s1:43,s2:0,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000003,date:"2026-05-26",worker:"김영진",qtys:{s1:45,s2:1,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000004,date:"2026-05-28",worker:"김영진",qtys:{s1:22,s2:0,s3:0,s4:0,s5:1,s6:0,s7:0}},
+        {id:1700000000005,date:"2026-05-29",worker:"김영진",qtys:{s1:28,s2:2,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000006,date:"2026-05-30",worker:"김영진",qtys:{s1:29,s2:0,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000007,date:"2026-05-31",worker:"김영진",qtys:{s1:42,s2:0,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000008,date:"2026-06-02",worker:"김영진",qtys:{s1:22,s2:0,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000009,date:"2026-06-02",worker:"이광득",qtys:{s1:22,s2:0,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000010,date:"2026-06-04",worker:"김영진",qtys:{s1:4,s2:0,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000011,date:"2026-06-04",worker:"이광득",qtys:{s1:25,s2:1,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000012,date:"2026-06-04",worker:"신현일",qtys:{s1:14,s2:0,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000013,date:"2026-06-06",worker:"이광득",qtys:{s1:30,s2:0,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000014,date:"2026-06-06",worker:"신현일",qtys:{s1:17,s2:0,s3:1,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000015,date:"2026-06-08",worker:"김영진",qtys:{s1:30,s2:1,s3:1,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000016,date:"2026-06-08",worker:"이광득",qtys:{s1:15,s2:1,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000017,date:"2026-06-08",worker:"신현일",qtys:{s1:15,s2:0,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000018,date:"2026-06-10",worker:"김영진",qtys:{s1:18,s2:2,s3:1,s4:0,s5:1,s6:0,s7:0}},
+        {id:1700000000019,date:"2026-06-10",worker:"이광득",qtys:{s1:21,s2:0,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000020,date:"2026-06-14",worker:"김영진",qtys:{s1:13,s2:0,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000021,date:"2026-06-17",worker:"김영진",qtys:{s1:26,s2:1,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000022,date:"2026-06-17",worker:"이광득",qtys:{s1:23,s2:1,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000023,date:"2026-06-17",worker:"신현일",qtys:{s1:20,s2:0,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000024,date:"2026-06-18",worker:"김영진",qtys:{s1:25,s2:0,s3:0,s4:1,s5:0,s6:0,s7:0}},
+        {id:1700000000025,date:"2026-06-18",worker:"이광득",qtys:{s1:31,s2:0,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000026,date:"2026-06-18",worker:"신현일",qtys:{s1:16,s2:0,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000027,date:"2026-06-19",worker:"김영진",qtys:{s1:29,s2:1,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000028,date:"2026-06-19",worker:"이광득",qtys:{s1:17,s2:0,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000029,date:"2026-06-21",worker:"김영진",qtys:{s1:33,s2:0,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000030,date:"2026-06-25",worker:"김영진",qtys:{s1:34,s2:1,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000031,date:"2026-06-29",worker:"김영진",qtys:{s1:30,s2:1,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000032,date:"2026-06-29",worker:"이광득",qtys:{s1:19,s2:1,s3:0,s4:0,s5:0,s6:0,s7:0}},
+        {id:1700000000033,date:"2026-06-29",worker:"신현일",qtys:{s1:21,s2:0,s3:0,s4:0,s5:0,s6:0,s7:0}}
+        ]
       }));
     }
   } catch(e) {}
